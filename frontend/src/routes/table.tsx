@@ -24,6 +24,7 @@ export const Route = createFileRoute("/table")({
   component: IndexPage,
 });
 
+
 function IndexPage() {
   const [filters, setFilters] = useState<FilterOptions>(initialFilters);
   const [sortOption, setSortOption] = useState<SortOption>("salary-desc");
