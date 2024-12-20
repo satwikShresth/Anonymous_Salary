@@ -1,0 +1,22 @@
+export const companies = [
+  "Google",
+  "Microsoft",
+  "Amazon",
+  "Apple",
+  "Meta",
+  "IBM",
+  "Intel",
+  "AMD",
+  "Nvidia",
+  "Salesforce",
+  "Adobe",
+  "Twitter",
+  "LinkedIn",
+  "Shopify",
+  "Uber",
+  "Lyft",
+  "Airbnb",
+  "Netflix",
+  "Oracle",
+  "SAP"
+];

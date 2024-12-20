@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1734573409156,
+      "tag": "0000_inital",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1734578076731,
+      "tag": "0001_adding programlevel to major",
+      "breakpoints": true
+    }
+  ]
+}
