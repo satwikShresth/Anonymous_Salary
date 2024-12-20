@@ -4,12 +4,15 @@ import { Briefcase } from "lucide-react";
 export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: () => {
-    window.location.href = '/table';
-    return null;
+    throw redirect({
+      to: '/table'
+    })
   },
   errorComponent: ({ error }) => {
-    window.location.href = '/table';
-    return null;
+    console.error(`Error: ${error}`)
+    throw redirect({
+      to: '/table'
+    })
   }
 });
 

@@ -6,7 +6,7 @@ import { PreviewSection } from './sections/preview';
 import { FormProgress } from './progress';
 import { FormNavigation } from './navigation';
 import { useFormSteps } from '../../hooks/useFormSteps';
-import { usePersistedFormState } from '../../hooks/usePersistantFormState';
+import { useFormState } from '../../hooks/useFormStates';
 
 interface JobFormProps {
 	onSubmit: (data: JobData) => void;
@@ -33,9 +33,9 @@ const stepTitles = ['Company', 'Compensation', 'Program', 'Preview'];
 export function JobForm({ onSubmit }: JobFormProps) {
 	const {
 		formData,
-		setFormData,
-		clearSavedState
-	} = usePersistedFormState(initialFormData);
+		updateFormData,
+		resetFormData
+	} = useFormState(initialFormData);
 
 	const {
 		currentStep,
@@ -53,14 +53,9 @@ export function JobForm({ onSubmit }: JobFormProps) {
 
 	const handleFinalSubmit = () => {
 		onSubmit(formData);
-		clearSavedState();
+		resetFormData();
 		clearStepState();
-		setFormData(initialFormData);
 		goToStep(1, initialFormData);
-	};
-
-	const updateFormData = (data: Partial<JobData>) => {
-		setFormData(prev => ({ ...prev, ...data }));
 	};
 
 	const renderStepContent = () => {

@@ -1,18 +1,68 @@
 import { Building2, MapPin, Briefcase } from 'lucide-react';
 import { AutocompleteInput } from '../../../ui/autocomplete';
 import { RangeInput } from '../../../ui/rangeInput';
+import { SuggestionModal } from '../../../ui/suggestionModal';
 import type { JobData } from '../../../../types/job';
 import { companies } from '../../../../data/companies';
 import { positions } from '../../../../data/positions';
 import { locations } from '../../../../data/locations';
 import { RadioGroup } from '../../../ui/radio';
+import { useSuggestionModal } from '../../../../hooks/useSuggestionModal';
+
 
 interface CompanySectionProps {
 	formData: JobData;
 	onChange: (data: Partial<JobData>) => void;
 }
 
+
+export const suggestionConfigs = {
+	company: {
+		type: 'company',
+		title: 'Suggest New Company',
+		description: 'Please provide the name of the company you would like to add to our database.',
+		icon: Building2,
+		allowSuggestions: true,
+	},
+	position: {
+		type: 'position',
+		title: 'Suggest New Position',
+		description: 'Please provide the job title you would like to add to our database.',
+		icon: Briefcase,
+		allowSuggestions: true,
+	},
+	location: {
+		type: 'location',
+		title: 'Location',
+		description: 'Select a location from the list.',
+		icon: MapPin,
+		allowSuggestions: false,
+	}
+};
+
 export function CompanySection({ formData, onChange }: CompanySectionProps) {
+	const {
+		isOpen,
+		modalConfig,
+		openModal,
+		closeModal,
+		handleSubmit
+	} = useSuggestionModal();
+
+	const handleSuggestion = (type: keyof typeof suggestionConfigs) => (_: string) => {
+		const config = suggestionConfigs[type];
+		if (!config.allowSuggestions) return;
+
+		openModal({
+			title: config.title,
+			description: config.description
+		}, (newValue) => {
+			// Here you would typically send this to your backend
+			console.log(`New ${type} suggestion:`, newValue);
+			onChange({ [type === 'company' ? 'companyName' : type]: newValue });
+		});
+	};
+
 	return (
 		<div className="space-y-6">
 			<h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
@@ -21,28 +71,24 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 			</h2>
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 				<AutocompleteInput
-					label="Company Name"
-					icon={<Building2 className="w-4 h-4 text-gray-500" />}
-					options={companies}
+					config={suggestionConfigs.company}
 					value={formData.companyName}
 					onChange={(value) => onChange({ companyName: value })}
-					placeholder="Select company..."
+					options={companies}
+					onSuggestion={handleSuggestion('company')}
 				/>
 				<AutocompleteInput
-					label="Position"
-					icon={<Briefcase className="w-4 h-4 text-gray-500" />}
-					options={positions}
+					config={suggestionConfigs.position}
 					value={formData.position}
 					onChange={(value) => onChange({ position: value })}
-					placeholder="Select position..."
+					options={positions}
+					onSuggestion={handleSuggestion('position')}
 				/>
 				<AutocompleteInput
-					label="Location"
-					icon={<MapPin className="w-4 h-4 text-gray-500" />}
-					options={locations}
+					config={suggestionConfigs.location}
 					value={formData.location}
 					onChange={(value) => onChange({ location: value })}
-					placeholder="Select location..."
+					options={locations}
 				/>
 				<RadioGroup
 					label="Source"
@@ -60,6 +106,16 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 					icon="clock"
 				/>
 			</div>
+
+			{isOpen && (
+				<SuggestionModal
+					isOpen={isOpen}
+					onClose={closeModal}
+					onSubmit={handleSubmit}
+					title={modalConfig.title}
+					description={modalConfig.description}
+				/>
+			)}
 		</div>
 	);
 }

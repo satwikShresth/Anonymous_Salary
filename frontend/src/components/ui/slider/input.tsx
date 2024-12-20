@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 
 interface SliderInputProps {
   value: number;
@@ -22,6 +22,39 @@ export function SliderInput({
   suffix
 }: SliderInputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [localValue, setLocalValue] = useState(value.toString());
+
+  // Update local value when prop value changes
+  if (value.toString() !== localValue && !isFocused) {
+    setLocalValue(value.toString());
+  }
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+    setLocalValue(inputValue);
+
+    const numValue = parseFloat(inputValue);
+    if (!isNaN(numValue)) {
+      const stepAlignedValue = Math.round(numValue / step) * step;
+      const clampedValue = Math.min(Math.max(stepAlignedValue, min), max);
+      onChange(clampedValue);
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+
+    // Ensure the display value is valid on blur
+    const numValue = parseFloat(localValue);
+    if (isNaN(numValue)) {
+      setLocalValue(value.toString());
+    } else {
+      const stepAlignedValue = Math.round(numValue / step) * step;
+      const clampedValue = Math.min(Math.max(stepAlignedValue, min), max);
+      setLocalValue(clampedValue.toString());
+      onChange(clampedValue);
+    }
+  };
 
   return (
     <div className="flex items-center space-x-1">
@@ -30,23 +63,14 @@ export function SliderInput({
       )}
       <div className="relative inline-flex items-center">
         <input
-          type="number"
-          value={value}
-          onChange={(e) => {
-            const newValue = Number(e.target.value);
-            if (!isNaN(newValue)) {
-              const clampedValue = Math.min(Math.max(newValue, min), max);
-              onChange(clampedValue);
-            }
-          }}
+          type="text"
+          value={localValue}
+          onChange={handleChange}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          min={min}
-          max={max}
-          step={step}
+          onBlur={handleBlur}
           disabled={disabled}
           className={`
-            w-35 py-1.5 pl-2 pr-7 rounded-md text-sm text-right
+            w-14 py-1.5 pl-2 pr-7 rounded-md text-sm text-right
             transition-all duration-200
             ${disabled
               ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
