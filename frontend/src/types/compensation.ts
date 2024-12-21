@@ -16,3 +16,11 @@ export const compensationTypes: { value: CompensationType; label: string }[] = [
   { value: 'food', label: 'Food/Meals' },
   { value: 'other', label: 'Other' }
 ];
+
+export interface CompensationRange {
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  suffix?: string;
+}

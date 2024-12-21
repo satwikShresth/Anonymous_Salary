@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Search, Loader2 } from 'lucide-react';
 
 interface MultiSelectProps {
   label: string;
@@ -10,6 +10,7 @@ interface MultiSelectProps {
   maxItems?: number;
   required?: boolean;
   placeholder?: string;
+  loading?: boolean;
 }
 
 export function MultiSelect({
@@ -20,7 +21,8 @@ export function MultiSelect({
   onChange,
   maxItems = 5,
   required = false,
-  placeholder = 'Select...'
+  placeholder = 'Select...',
+  loading = false
 }: MultiSelectProps) {
   const [search, setSearch] = useState('');
   const [showOptions, setShowOptions] = useState(false);
@@ -78,6 +80,7 @@ export function MultiSelect({
               type="button"
               onClick={() => handleRemove(value)}
               className="p-0.5 hover:bg-blue-200 rounded-full transition-colors duration-150"
+              disabled={loading}
             >
               <X className="w-3 h-3" />
             </button>
@@ -98,13 +101,18 @@ export function MultiSelect({
               }}
               onFocus={() => setShowOptions(true)}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
-              placeholder={placeholder}
+              placeholder={loading ? 'Loading...' : placeholder}
+              disabled={loading}
             />
-            <Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            {loading ? (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" size={20} />
+            ) : (
+              <Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            )}
           </div>
 
           {/* Dropdown */}
-          {showOptions && filteredOptions.length > 0 && (
+          {showOptions && !loading && filteredOptions.length > 0 && (
             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {filteredOptions.map((option) => (
                 <button

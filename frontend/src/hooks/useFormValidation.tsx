@@ -1,3 +1,6 @@
+import { companies } from '../data/companies';
+import { locations } from '../data/locations';
+import { positions } from '../data/positions';
 import type { JobData } from '../types/job';
 
 export function useFormValidation() {
@@ -6,13 +9,22 @@ export function useFormValidation() {
 
     if (!data.companyName) {
       errors.companyName = 'Company name is required';
+    } else if (!companies.includes(data.companyName)) {
+      errors.companyName = 'Please select a company from the list';
     }
+
     if (!data.position) {
       errors.position = 'Position is required';
+    } else if (!positions.includes(data.position)) {
+      errors.position = 'Please select a position from the list';
     }
+
     if (!data.location) {
       errors.location = 'Location is required';
+    } else if (!locations.includes(data.location)) {
+      errors.location = 'Please select a location from the list';
     }
+
     if (!data.workHours || data.workHours < 20 || data.workHours > 80) {
       errors.workHours = 'Work hours must be between 20 and 80';
     }
@@ -36,15 +48,9 @@ export function useFormValidation() {
     return errors;
   };
 
-  const validateProgramSection = (data: JobData) => {
-    const errors: Record<string, string> = {};
-
-    if (!data.majors.length) {
-      errors.majors = 'At least one major is required';
-    }
-
-    return errors;
-  };
+  // Decision and Program sections are now optional, so they always validate successfully
+  const validateDecisionSection = () => ({});
+  const validateProgramSection = () => ({});
 
   const validateStep = (step: number, data: JobData) => {
     switch (step) {
@@ -53,7 +59,9 @@ export function useFormValidation() {
       case 2:
         return validateCompensationSection(data);
       case 3:
-        return validateProgramSection(data);
+        return validateDecisionSection();
+      case 4:
+        return validateProgramSection();
       default:
         return {};
     }

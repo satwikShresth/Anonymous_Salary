@@ -1,6 +1,6 @@
 import { DollarSign, Clock, Gift } from 'lucide-react';
-import type { JobData } from '../../../../types/job';
-import { PreviewItem } from './components/item';
+import type { JobData } from '../../../../../types/job';
+import { PreviewItem } from '../components/item';
 
 interface PreviewCompensationProps {
 	formData: JobData;

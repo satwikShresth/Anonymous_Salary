@@ -1,6 +1,6 @@
 import { Calendar } from 'lucide-react';
-import type { JobData } from '../../../../types/job';
-import { PreviewItem } from './components/item';
+import type { JobData } from '../../../../../types/job';
+import { PreviewItem } from '../components/item';
 
 interface PreviewTermProps {
 	formData: JobData;

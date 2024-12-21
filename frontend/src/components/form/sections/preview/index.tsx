@@ -1,9 +1,10 @@
 import type { JobData } from '../../../../types/job';
 import { PreviewHeader } from './components/header';
-import { PreviewCompany } from './company';
-import { PreviewProgram } from './program';
-import { PreviewCompensation } from './compensation';
-import { PreviewTerm } from './term';
+import { PreviewCompany } from './sections/company';
+import { PreviewProgram } from './sections/program';
+import { PreviewCompensation } from './sections/compensation';
+import { PreviewTerm } from './sections/term';
+import { PreviewDecision } from './sections/decision';
 
 interface PreviewSectionProps {
 	formData: JobData;
@@ -18,8 +19,9 @@ export function PreviewSection({ formData, onSubmit, onBack }: PreviewSectionPro
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<PreviewCompany formData={formData} />
-				<PreviewProgram formData={formData} />
 				<PreviewCompensation formData={formData} />
+				<PreviewDecision formData={formData} />
+				<PreviewProgram formData={formData} />
 				<PreviewTerm formData={formData} />
 			</div>
 

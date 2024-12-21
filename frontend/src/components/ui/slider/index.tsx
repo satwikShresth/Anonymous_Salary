@@ -10,7 +10,7 @@ interface SliderProps {
   step?: number;
   disabled?: boolean;
   unit?: string;
-  displaySuffix?: string;
+  displayPrefix?: string;
 }
 
 export function Slider({
@@ -21,7 +21,7 @@ export function Slider({
   step = 1,
   disabled = false,
   unit = '',
-  displaySuffix = ''
+  displayPrefix = ''
 }: SliderProps) {
   return (
     <div className="space-y-6">
@@ -39,10 +39,9 @@ export function Slider({
             min={min}
             max={max}
             step={step}
-            unit={unit}
           />
         </div>
-        <div className="-mt-6 -mt-6 -ml-2">
+        <div className="-mt-6 -ml-1">
           <SliderInput
             value={value}
             onChange={onChange}
@@ -51,7 +50,7 @@ export function Slider({
             step={step}
             disabled={disabled}
             suffix={unit}
-            prefix={displaySuffix}
+            prefix={displayPrefix}
           />
         </div>
       </div>

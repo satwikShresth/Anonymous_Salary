@@ -1,7 +1,7 @@
 import { GraduationCap, BookOpen } from 'lucide-react';
-import type { JobData } from '../../../../types/job';
-import { PreviewItem } from './components/item';
-import { PreviewBadge } from './components/badge';
+import type { JobData } from '../../../../../types/job';
+import { PreviewItem } from '../components/item';
+import { PreviewBadge } from '../components/badge';
 
 interface PreviewProgramProps {
 	formData: JobData;

@@ -1,9 +1,8 @@
 import { GraduationCap, BookOpen } from 'lucide-react';
-import { majors } from '../../../../data/majors';
-import { minors } from '../../../../data/minors';
 import { RadioGroup } from '../../../ui/radio';
 import { MultiSelect } from '../../../ui/multiselect';
 import type { JobData } from '../../../../types/job';
+import { useMajors, useMinors } from '../../../../hooks/autocomplete';
 
 interface ProgramSectionProps {
 	formData: JobData;
@@ -11,11 +10,13 @@ interface ProgramSectionProps {
 }
 
 export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
+	const { data: majors, loading: loadingMajors } = useMajors();
+	const { data: minors, loading: loadingMinors } = useMinors();
 	return (
 		<div className="space-y-6">
 			<h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
 				<GraduationCap className="w-5 h-5 text-blue-600" />
-				Program Details
+				Program Details (Optional)
 			</h2>
 			<div className="grid grid-cols-1 gap-6">
 				<MultiSelect
@@ -23,8 +24,8 @@ export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 					icon={<GraduationCap className="w-4 h-4 text-gray-500" />}
 					options={majors}
 					values={formData.majors}
+					loading={loadingMajors}
 					onChange={(values) => onChange({ majors: values })}
-					required
 					placeholder="Add a major..."
 				/>
 				<MultiSelect
@@ -32,6 +33,7 @@ export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 					icon={<BookOpen className="w-4 h-4 text-gray-500" />}
 					options={minors}
 					values={formData.minors}
+					loading={loadingMinors}
 					onChange={(values) => onChange({ minors: values })}
 					placeholder="Add a minor..."
 				/>
@@ -56,6 +58,13 @@ export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 						value={formData.level}
 						onChange={(value) => onChange({ level: value as JobData['level'] })}
 						type="level"
+					/>
+					<RadioGroup
+						label="Source"
+						options={['SCDC', 'external']}
+						value={formData.source}
+						onChange={(value) => onChange({ source: value as JobData['source'] })}
+						type="source"
 					/>
 				</div>
 			</div>

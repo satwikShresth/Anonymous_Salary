@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Loader2, Plus, Search } from 'lucide-react';
 
 interface AutocompleteInputProps {
   config: { title: string, icon: any, type: any, allowSuggestions: boolean };
@@ -7,6 +7,7 @@ interface AutocompleteInputProps {
   onChange: (value: string) => void;
   options: string[];
   onSuggestion?: (value: string) => void;
+  loading?: boolean;
 }
 
 export function AutocompleteInput({
@@ -14,7 +15,8 @@ export function AutocompleteInput({
   value,
   onChange,
   options,
-  onSuggestion
+  onSuggestion,
+  loading = false
 }: AutocompleteInputProps) {
   const [search, setSearch] = useState('');
   const [showOptions, setShowOptions] = useState(false);
@@ -74,13 +76,16 @@ export function AutocompleteInput({
         <input
           type="text"
           required
-          placeholder={`Select ${config.type}...`}
+          placeholder={loading ? 'Loading...' : `Select ${config.type}...`}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
           value={displayValue}
           onChange={handleInputChange}
           onFocus={() => setShowOptions(true)}
+          disabled={loading}
         />
-        {config.allowSuggestions && search && !filteredOptions.length && (
+        {loading ? (
+          <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" />
+        ) : config.allowSuggestions && search && !filteredOptions.length ? (
           <button
             type="button"
             onClick={handleSuggestion}
@@ -88,11 +93,10 @@ export function AutocompleteInput({
           >
             <Plus className="w-5 h-5" />
           </button>
-        )}
-        {(!search || filteredOptions.length > 0) && (
+        ) : (
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         )}
-        {showOptions && filteredOptions.length > 0 && (
+        {showOptions && !loading && filteredOptions.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
             {filteredOptions.map((option) => (
               <div

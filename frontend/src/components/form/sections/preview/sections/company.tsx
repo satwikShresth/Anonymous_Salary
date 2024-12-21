@@ -1,6 +1,6 @@
 import { Building2, Briefcase, MapPin } from 'lucide-react';
-import type { JobData } from '../../../../types/job';
-import { PreviewItem } from './components/item.tsx';
+import type { JobData } from '../../../../../types/job';
+import { PreviewItem } from '../components/item.tsx';
 
 interface PreviewCompanyProps {
 	formData: JobData;

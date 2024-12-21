@@ -2,10 +2,9 @@ interface SliderMarksProps {
   min: number;
   max: number;
   step: number;
-  unit?: string;
 }
 
-export function SliderMarks({ min, max, step, unit = '' }: SliderMarksProps) {
+export function SliderMarks({ min, max, step }: SliderMarksProps) {
   const marks = [];
   const totalSteps = (max - min) / step;
   const interval = Math.ceil(totalSteps / 4); // Show 5 marks including min and max
@@ -27,7 +26,7 @@ export function SliderMarks({ min, max, step, unit = '' }: SliderMarksProps) {
           <div key={mark} className="flex flex-col items-center">
             <div className="h-2 w-0.5 bg-gray-300" />
             <span className="text-xs text-gray-500 mt-1">
-              {mark}{unit}
+              {mark}
             </span>
           </div>
         ))}

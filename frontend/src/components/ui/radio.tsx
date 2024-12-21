@@ -1,22 +1,33 @@
-import { Calendar, GraduationCap, BookOpen, Globe } from 'lucide-react';
+import { Calendar, GraduationCap, BookOpen, Globe, CheckCircle2 } from 'lucide-react';
 
 interface RadioGroupProps {
   label: string;
   options: string[];
   value: string;
   onChange: (value: string) => void;
-  type?: 'year' | 'cycle' | 'level' | 'source';
+  type?: 'year' | 'cycle' | 'level' | 'source' | 'status' | 'decision';
+  optional?: boolean;
 }
 
-export function RadioGroup({ label, options, value, onChange, type }: RadioGroupProps) {
+export function RadioGroup({ label, options, value, onChange, type, optional }: RadioGroupProps) {
+  const getIcon = () => {
+    switch (type) {
+      case 'year': return <GraduationCap className="w-4 h-4 text-gray-500" />;
+      case 'cycle': return <Calendar className="w-4 h-4 text-gray-500" />;
+      case 'level': return <BookOpen className="w-4 h-4 text-gray-500" />;
+      case 'source': return <Globe className="w-4 h-4 text-gray-500" />;
+      case 'status':
+      case 'decision': return <CheckCircle2 className="w-4 h-4 text-gray-500" />;
+      default: return null;
+    }
+  };
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-        {type === 'year' && <GraduationCap className="w-4 h-4 text-gray-500" />}
-        {type === 'cycle' && <Calendar className="w-4 h-4 text-gray-500" />}
-        {type === 'level' && <BookOpen className="w-4 h-4 text-gray-500" />}
-        {type === 'source' && <Globe className="w-4 h-4 text-gray-500" />}
+        {getIcon()}
         {label}
+        {optional && <span className="text-sm text-gray-500">(Optional)</span>}
       </label>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option) => (

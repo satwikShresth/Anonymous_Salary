@@ -1,4 +1,4 @@
-import type { JobData } from '../../types/job';
+import { defaultJobData, type JobData } from '../../types/job';
 import { CompensationSection } from './sections/compensation';
 import { CompanySection } from './sections/company';
 import { ProgramSection } from './sections/program';
@@ -7,35 +7,20 @@ import { FormProgress } from './progress';
 import { FormNavigation } from './navigation';
 import { useFormSteps } from '../../hooks/useFormSteps';
 import { useFormState } from '../../hooks/useFormStates';
+import { DecisionSection } from './sections/decision';
 
 interface JobFormProps {
 	onSubmit: (data: JobData) => void;
 }
 
-const initialFormData: JobData = {
-	companyName: '',
-	position: '',
-	majors: [],
-	minors: [],
-	salary: 50,
-	salaryNA: false,
-	location: '',
-	workHours: 40,
-	coopYear: '1st',
-	coopCycle: 'spring/summer',
-	compensations: [],
-	level: 'undergraduate',
-	source: 'SCDC'
-};
-
-const stepTitles = ['Company', 'Compensation', 'Program', 'Preview'];
+const stepTitles = ['Company', 'Compensation', 'Decision', 'Program', 'Preview'];
 
 export function JobForm({ onSubmit }: JobFormProps) {
 	const {
 		formData,
 		updateFormData,
 		resetFormData
-	} = useFormState(initialFormData);
+	} = useFormState(defaultJobData);
 
 	const {
 		currentStep,
@@ -45,7 +30,7 @@ export function JobForm({ onSubmit }: JobFormProps) {
 		goToNextStep,
 		goToPreviousStep,
 		clearStepState
-	} = useFormSteps(4);
+	} = useFormSteps(5);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -55,7 +40,7 @@ export function JobForm({ onSubmit }: JobFormProps) {
 		onSubmit(formData);
 		resetFormData();
 		clearStepState();
-		goToStep(1, initialFormData);
+		goToStep(1, defaultJobData);
 	};
 
 	const renderStepContent = () => {
@@ -65,8 +50,10 @@ export function JobForm({ onSubmit }: JobFormProps) {
 			case 2:
 				return <CompensationSection formData={formData} onChange={updateFormData} />;
 			case 3:
-				return <ProgramSection formData={formData} onChange={updateFormData} />;
+				return <DecisionSection formData={formData} onChange={updateFormData} />;
 			case 4:
+				return <ProgramSection formData={formData} onChange={updateFormData} />;
+			case 5:
 				return (
 					<PreviewSection
 						formData={formData}

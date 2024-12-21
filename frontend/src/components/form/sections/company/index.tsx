@@ -3,11 +3,9 @@ import { AutocompleteInput } from '../../../ui/autocomplete';
 import { RangeInput } from '../../../ui/rangeInput';
 import { SuggestionModal } from '../../../ui/suggestionModal';
 import type { JobData } from '../../../../types/job';
-import { companies } from '../../../../data/companies';
-import { positions } from '../../../../data/positions';
-import { locations } from '../../../../data/locations';
 import { RadioGroup } from '../../../ui/radio';
 import { useSuggestionModal } from '../../../../hooks/useSuggestionModal';
+import { useCompanies, useLocations, usePositions } from '../../../../hooks/autocomplete';
 
 
 interface CompanySectionProps {
@@ -41,6 +39,10 @@ export const suggestionConfigs = {
 };
 
 export function CompanySection({ formData, onChange }: CompanySectionProps) {
+	const { data: companies, loading: loadingCompanies } = useCompanies();
+	const { data: positions, loading: loadingPositions } = usePositions();
+	const { data: locations, loading: loadingLocations } = useLocations();
+
 	const {
 		isOpen,
 		modalConfig,
@@ -75,6 +77,7 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 					value={formData.companyName}
 					onChange={(value) => onChange({ companyName: value })}
 					options={companies}
+					loading={loadingCompanies}
 					onSuggestion={handleSuggestion('company')}
 				/>
 				<AutocompleteInput
@@ -82,11 +85,13 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 					value={formData.position}
 					onChange={(value) => onChange({ position: value })}
 					options={positions}
+					loading={loadingPositions}
 					onSuggestion={handleSuggestion('position')}
 				/>
 				<AutocompleteInput
 					config={suggestionConfigs.location}
 					value={formData.location}
+					loading={loadingLocations}
 					onChange={(value) => onChange({ location: value })}
 					options={locations}
 				/>
