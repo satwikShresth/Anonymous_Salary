@@ -1,6 +1,9 @@
 import { Hono } from '@hono/hono';
 import { logger } from '@hono/hono/logger';
 import { cors } from '@hono/hono/cors';
+import { db } from '../database/mod.ts';
+import { company } from '../database/schema/table.ts';
+import { count, desc, like } from 'drizzle-orm';
 
 // Create the main app instance
 const app = new Hono();
@@ -9,38 +12,44 @@ const app = new Hono();
 app.use('*', logger());
 app.use('*', cors());
 
-// Basic health check endpoint
-app.get('/health', (c) => {
-   return c.json({
-      status: 'ok',
-      timestamp: new Date().toISOString(),
-   });
-});
+app.get('/companies', async (c) => {
+   console.log('pass');
+   const page = Number(c.req.query('page')) || 1;
+   const limit = Number(c.req.query('limit')) || 10;
+   const search = c.req.query('search');
 
-// Sample GET endpoint
-app.get('/api/hello/:name', (c) => {
-   const name = c.req.param('name');
-   return c.json({
-      message: `Hello, ${name}!`,
-      timestamp: new Date().toISOString(),
-   });
-});
+   const offset = (page - 1) * limit;
 
-// Sample POST endpoint
-app.post('/api/message', async (c) => {
-   const body = await c.req.json();
+   let query = db.select()
+      .from(company)
+      .orderBy(desc(company.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-   if (!body.message) {
-      return c.json({ error: 'Message is required' }, 400);
+   if (search) {
+      query = query.where(like(company.name, `%${search}%`));
    }
 
+   const companies = await query;
+
+   const [{ value }] = await db.select({
+      value: count(),
+   }).from(company)
+      .where(search ? like(company.name, `%${search}%`) : undefined);
+
+   console.log(companies);
+
    return c.json({
-      received: body.message,
-      timestamp: new Date().toISOString(),
+      data: companies,
+      pagination: {
+         total: value,
+         page,
+         limit,
+         totalPages: Math.ceil(value / limit),
+      },
    });
 });
 
-// Error handling
 app.onError((err, c) => {
    console.error(`${err}`);
    return c.json({

@@ -1,7 +1,7 @@
-import { companies } from '../data/companies';
-import { locations } from '../data/locations';
-import { positions } from '../data/positions';
 import type { JobData } from '../types/job';
+import { companies } from '../data/companies';
+import { positions } from '../data/positions';
+import { locations } from '../data/locations';
 
 export function useFormValidation() {
   const validateCompanySection = (data: JobData) => {
@@ -48,9 +48,33 @@ export function useFormValidation() {
     return errors;
   };
 
-  // Decision and Program sections are now optional, so they always validate successfully
+  const validateProgramSection = (data: JobData) => {
+    const errors: Record<string, string> = {};
+
+    if (!data.majors.length) {
+      errors.majors = 'At least one major is required';
+    }
+
+    if (!data.level) {
+      errors.level = 'Level is required';
+    }
+
+    if (!data.source) {
+      errors.source = 'Source is required';
+    }
+
+    if (!data.coopYear) {
+      errors.coopYear = 'Co-op year is required';
+    }
+
+    if (!data.coopCycle) {
+      errors.coopCycle = 'Co-op cycle is required';
+    }
+
+    return errors;
+  };
+
   const validateDecisionSection = () => ({});
-  const validateProgramSection = () => ({});
 
   const validateStep = (step: number, data: JobData) => {
     switch (step) {
@@ -61,7 +85,7 @@ export function useFormValidation() {
       case 3:
         return validateDecisionSection();
       case 4:
-        return validateProgramSection();
+        return validateProgramSection(data);
       default:
         return {};
     }

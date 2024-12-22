@@ -12,11 +12,12 @@ interface ProgramSectionProps {
 export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 	const { data: majors, loading: loadingMajors } = useMajors();
 	const { data: minors, loading: loadingMinors } = useMinors();
+
 	return (
 		<div className="space-y-6">
 			<h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
 				<GraduationCap className="w-5 h-5 text-blue-600" />
-				Program Details (Optional)
+				Program Details
 			</h2>
 			<div className="grid grid-cols-1 gap-6">
 				<MultiSelect
@@ -24,18 +25,19 @@ export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 					icon={<GraduationCap className="w-4 h-4 text-gray-500" />}
 					options={majors}
 					values={formData.majors}
-					loading={loadingMajors}
 					onChange={(values) => onChange({ majors: values })}
+					required
 					placeholder="Add a major..."
+					loading={loadingMajors}
 				/>
 				<MultiSelect
 					label="Minors"
 					icon={<BookOpen className="w-4 h-4 text-gray-500" />}
 					options={minors}
 					values={formData.minors}
-					loading={loadingMinors}
 					onChange={(values) => onChange({ minors: values })}
-					placeholder="Add a minor..."
+					placeholder="Add a minor (optional)..."
+					loading={loadingMinors}
 				/>
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 					<RadioGroup
