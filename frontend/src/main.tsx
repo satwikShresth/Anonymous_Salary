@@ -3,10 +3,10 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { ChakraProvider } from "@chakra-ui/react";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import "./index.css";
 
 // Create a query client
@@ -40,7 +40,7 @@ await router.load();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
+      <ThemeProvider theme={createTheme()}>
         <RouterProvider router={router}>
           {/* Development tools */}
           {process.env.NODE_ENV === 'development' && (
@@ -57,7 +57,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </>
           )}
         </RouterProvider>
-      </ChakraProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>
 );

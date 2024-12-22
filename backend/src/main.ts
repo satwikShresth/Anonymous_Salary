@@ -2,52 +2,96 @@ import { Hono } from '@hono/hono';
 import { logger } from '@hono/hono/logger';
 import { cors } from '@hono/hono/cors';
 import { db } from '../database/mod.ts';
-import { company } from '../database/schema/table.ts';
-import { count, desc, like } from 'drizzle-orm';
+import { company, location, position } from '../database/schema/table.ts';
+import { eq, ilike, or } from 'drizzle-orm';
 
-// Create the main app instance
 const app = new Hono();
 
-// Middleware
 app.use('*', logger());
 app.use('*', cors());
 
-app.get('/companies', async (c) => {
-   console.log('pass');
-   const page = Number(c.req.query('page')) || 1;
-   const limit = Number(c.req.query('limit')) || 10;
-   const search = c.req.query('search');
+const companies = [
+   'Google',
+   'Microsoft',
+   'Amazon',
+   'Apple',
+   'Meta',
+   'IBM',
+   'Intel',
+   'AMD',
+   'Nvidia',
+   'Salesforce',
+   'Adobe',
+   'Twitter',
+   'LinkedIn',
+   'Shopify',
+   'Uber',
+   'Lyft',
+   'Airbnb',
+   'Netflix',
+   'Oracle',
+   'SAP',
+];
 
-   const offset = (page - 1) * limit;
+app.get('/positions', async (c) => {
+   const query_c = c.req.query('c');
+   const query = c.req.query('q');
 
-   let query = db.select()
-      .from(company)
-      .orderBy(desc(company.createdAt))
-      .limit(limit)
-      .offset(offset);
+   const results = await db
+      .select({
+         name: position.name,
+      })
+      .from(position)
+      .innerJoin(company, eq(position.companyId, company.id))
+      .where(
+         eq(company.name, query_c),
+      );
 
-   if (search) {
-      query = query.where(like(company.name, `%${search}%`));
+   return c.json(results.map((item) => item.name));
+});
+
+app.get('/locations', async (c) => {
+   const query = c.req.query('q');
+
+   let results;
+
+   if (!query) {
+      results = await db.select().from(location);
+   } else {
+      results = await db
+         .select()
+         .from(location)
+         .where(
+            or(
+               ilike(location.stateId, `%${query}%`),
+               ilike(location.state, `%${query}%`),
+               ilike(location.city, `%${query}%`),
+            ),
+         );
+      console.log(results);
    }
 
-   const companies = await query;
+   return c.json(results.map((item) => `${item.city}, ${item.stateId}`));
+});
 
-   const [{ value }] = await db.select({
-      value: count(),
-   }).from(company)
-      .where(search ? like(company.name, `%${search}%`) : undefined);
+app.get('/companies', async (c) => {
+   const query = c.req.query('q');
 
-   console.log(companies);
+   let results;
 
-   return c.json({
-      data: companies,
-      pagination: {
-         total: value,
-         page,
-         limit,
-         totalPages: Math.ceil(value / limit),
-      },
-   });
+   if (!query) {
+      results = await db.select().from(company);
+   } else {
+      results = await db
+         .select({ name: company.name })
+         .from(company)
+         .where(
+            ilike(company.name, `%${query}%`),
+         );
+      console.log(results);
+   }
+
+   return c.json(results.map((item) => item.name));
 });
 
 app.onError((err, c) => {
@@ -58,7 +102,6 @@ app.onError((err, c) => {
    }, 500);
 });
 
-// Not Found handler
 app.notFound((c) => {
    return c.json({
       error: 'Not Found',

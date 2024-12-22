@@ -1,30 +1,21 @@
 import { Building2, MapPin, Briefcase } from 'lucide-react';
 import { AutocompleteInput } from '../../../ui/autocomplete';
 import { RangeInput } from '../../../ui/rangeInput';
-import { SuggestionModal } from '../../../ui/suggestionModal';
 import type { JobData } from '../../../../types/job';
 import { RadioGroup } from '../../../ui/radio';
-import { useSuggestionModal } from '../../../../hooks/useSuggestionModal';
 import { useCompanies, useLocations, usePositions } from '../../../../hooks/autocomplete';
-
-
-interface CompanySectionProps {
-	formData: JobData;
-	onChange: (data: Partial<JobData>) => void;
-}
-
 
 export const suggestionConfigs = {
 	company: {
 		type: 'company',
-		title: 'Suggest New Company',
+		title: 'Company Name',
 		description: 'Please provide the name of the company you would like to add to our database.',
 		icon: Building2,
 		allowSuggestions: true,
 	},
 	position: {
 		type: 'position',
-		title: 'Suggest New Position',
+		title: 'Position',
 		description: 'Please provide the job title you would like to add to our database.',
 		icon: Briefcase,
 		allowSuggestions: true,
@@ -38,32 +29,18 @@ export const suggestionConfigs = {
 	}
 };
 
+interface CompanySectionProps {
+	formData: JobData;
+	onChange: (data: Partial<JobData>) => void;
+}
+
 export function CompanySection({ formData, onChange }: CompanySectionProps) {
-	const { data: companies, loading: loadingCompanies } = useCompanies();
-	const { data: positions, loading: loadingPositions } = usePositions();
-	const { data: locations, loading: loadingLocations } = useLocations();
 
-	const {
-		isOpen,
-		modalConfig,
-		openModal,
-		closeModal,
-		handleSubmit
-	} = useSuggestionModal();
+	const { data: companies, loading: loadingCompanies, setData: setCompanies, fetchOptions: fetchCompanies, options: companyOptions } = useCompanies();
 
-	const handleSuggestion = (type: keyof typeof suggestionConfigs) => (_: string) => {
-		const config = suggestionConfigs[type];
-		if (!config.allowSuggestions) return;
+	const { data: position, loading: loadingPositions, setData: setPositions, fetchOptions: fetchPositions, options: positionOptions } = usePositions();
 
-		openModal({
-			title: config.title,
-			description: config.description
-		}, (newValue) => {
-			// Here you would typically send this to your backend
-			console.log(`New ${type} suggestion:`, newValue);
-			onChange({ [type === 'company' ? 'companyName' : type]: newValue });
-		});
-	};
+	const { data: location, loading: loadingLocations, setData: setLocation, fetchOptions: fetchLocations, options: locationOptions } = useLocations();
 
 	return (
 		<div className="space-y-6">
@@ -72,29 +49,51 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 				Company Information
 			</h2>
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
 				<AutocompleteInput
 					config={suggestionConfigs.company}
 					value={formData.companyName}
 					onChange={(value) => onChange({ companyName: value })}
-					options={companies}
+					fetchOptions={fetchCompanies}
+					options={companyOptions} // Use the options from the hook
 					loading={loadingCompanies}
-					onSuggestion={handleSuggestion('company')}
+					onSuggestion={(value: string) => {
+						onChange({ companyName: value });
+						if (!companies.includes(value)) {
+							setCompanies([...companies, value]);
+						}
+					}}
 				/>
+
 				<AutocompleteInput
 					config={suggestionConfigs.position}
 					value={formData.position}
 					onChange={(value) => onChange({ position: value })}
-					options={positions}
+					fetchOptions={(item) => fetchPositions(formData.companyName, item)}
+					options={positionOptions} // Use the options from the hook
 					loading={loadingPositions}
-					onSuggestion={handleSuggestion('position')}
+					onSuggestion={(value: string) => {
+						onChange({ position: value });
+						if (!position.includes(value)) {
+							setPositions([...position, value]);
+						}
+					}}
 				/>
 				<AutocompleteInput
 					config={suggestionConfigs.location}
 					value={formData.location}
-					loading={loadingLocations}
 					onChange={(value) => onChange({ location: value })}
-					options={locations}
+					fetchOptions={fetchLocations}
+					options={locationOptions}
+					loading={loadingLocations}
+					onSuggestion={(value: string) => {
+						onChange({ location: value });
+						if (!location.includes(value)) {
+							setPositions([...location, value]);
+						}
+					}}
 				/>
+
 				<RadioGroup
 					label="Source"
 					options={['SCDC', 'external']}
@@ -105,22 +104,13 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 				<RangeInput
 					label="Weekly Hours"
 					value={formData.workHours}
-					min={20}
-					max={80}
 					onChange={(value) => onChange({ workHours: value })}
+					step={1}
+					min={0}
+					max={80}
 					icon="clock"
 				/>
 			</div>
-
-			{isOpen && (
-				<SuggestionModal
-					isOpen={isOpen}
-					onClose={closeModal}
-					onSubmit={handleSubmit}
-					title={modalConfig.title}
-					description={modalConfig.description}
-				/>
-			)}
 		</div>
 	);
 }

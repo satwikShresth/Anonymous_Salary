@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SliderInputProps {
   value: number;
@@ -22,6 +22,33 @@ export function SliderInput({
   suffix = ''
 }: SliderInputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [localValue, setLocalValue] = useState(value);
+
+  // Update local value when prop value changes
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setLocalValue(Number(newValue));
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+
+    // Clamp and update the parent value
+    if (!isNaN(localValue)) {
+      const clampedValue = Math.min(Math.max(localValue, min), max);
+      setLocalValue(clampedValue);
+      if (clampedValue !== value) {
+        onChange(clampedValue);
+      }
+    } else {
+      // Reset to the last valid value if input is invalid
+      setLocalValue(value);
+    }
+  };
 
   return (
     <div className="flex items-center space-x-1">
@@ -36,22 +63,16 @@ export function SliderInput({
       <div className="relative inline-flex items-center">
         <input
           type="number"
-          value={value}
-          onChange={(e) => {
-            const newValue = Number(e.target.value);
-            if (!isNaN(newValue)) {
-              const clampedValue = Math.min(Math.max(newValue, min), max);
-              onChange(clampedValue);
-            }
-          }}
+          value={localValue}
+          onChange={handleChange}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={handleBlur}
           min={min}
           max={max}
           step={step}
           disabled={disabled}
           className={`
-            w-20 py-1.5 px-2 rounded-md text-sm text-right
+            w-22 py-1.5 px-2 rounded-md text-sm text-right
             transition-all duration-200
             ${disabled
               ? 'bg-gray-100 text-gray-500 cursor-not-allowed'

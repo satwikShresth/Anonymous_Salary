@@ -1,115 +1,225 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Loader2, Plus, Search } from 'lucide-react';
+import { useCallback, useState, useEffect } from 'react';
+import { Autocomplete, TextField, createTheme, ThemeProvider } from '@mui/material';
+import { Loader2 } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#3182CE',
+    },
+    background: {
+      paper: '#fff',
+    },
+  },
+  typography: {
+    fontFamily: 'inherit',
+  },
+  components: {
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            paddingLeft: '2.5rem',
+          },
+        },
+        paper: {
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          overflow: 'hidden',
+        },
+        listbox: {
+          padding: 0,
+        },
+        option: {
+          minHeight: 'auto',
+          padding: 0,
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#CBD5E0',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#3182CE',
+          },
+        },
+      },
+    },
+  },
+});
 
 interface AutocompleteInputProps {
-  config: { title: string, icon: any, type: any, allowSuggestions: boolean };
+  config: {
+    title: string;
+    icon: any;
+    type: any;
+    allowSuggestions: boolean;
+  };
   value: string;
   onChange: (value: string) => void;
+  fetchOptions: (query: string) => Promise<string[]>;
   options: string[];
   onSuggestion?: (value: string) => void;
   loading?: boolean;
+  minCharsBeforeSearch?: number;
 }
 
 export function AutocompleteInput({
   config,
   value,
   onChange,
-  options,
+  fetchOptions,
+  options = [],
   onSuggestion,
-  loading = false
+  loading = false,
+  minCharsBeforeSearch = 2,
 }: AutocompleteInputProps) {
-  const [search, setSearch] = useState('');
-  const [showOptions, setShowOptions] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [open, setOpen] = useState(false);
+  const [showAddOption, setShowAddOption] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const Icon = config.icon;
 
-  const filteredOptions = options.filter(option =>
-    option.toLowerCase().includes((search || '').toLowerCase())
-  );
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setShowOptions(false);
-        if (!value) {
-          setSearch('');
-        }
+  const handleSearch = useCallback(async (query: string) => {
+    if (query.length >= minCharsBeforeSearch && fetchOptions) {
+      setShowAddOption(false); // Reset the add option visibility
+      setIsSearching(true);
+      try {
+        await fetchOptions(query);
+        // After fetching, wait a brief moment before showing the add option
+        setTimeout(() => setShowAddOption(true), 500);
+      } finally {
+        setIsSearching(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [value]);
+  }, [fetchOptions, minCharsBeforeSearch]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSearch(newValue);
-    setShowOptions(true);
+  const debouncedSearch = useDebounce(handleSearch, 300);
 
-    if (!newValue) {
+  // Reset showAddOption when input is cleared
+  useEffect(() => {
+    if (!inputValue) {
+      setShowAddOption(false);
+    }
+  }, [inputValue]);
+
+  const handleChange = (_: any, newValue: string | null) => {
+    if (newValue === '__add_new__') {
+      handleSuggestionClick();
+    } else if (newValue && Array.isArray(options) && options.includes(newValue)) {
+      onChange(newValue);
+      setInputValue('');
+      setOpen(false);
+      setShowAddOption(false);
+    } else {
       onChange('');
     }
   };
 
-  const handleOptionSelect = (option: string) => {
-    onChange(option);
-    setSearch('');
-    setShowOptions(false);
-  };
-
-  const handleSuggestion = () => {
-    if (config.allowSuggestions && onSuggestion && search) {
-      onSuggestion(search);
-      setSearch('');
-      setShowOptions(false);
+  const handleInputChange = (_: any, newInputValue: string) => {
+    setInputValue(newInputValue);
+    if (!newInputValue) {
+      setOpen(false);
+      setShowAddOption(false);
+    } else {
+      debouncedSearch(newInputValue);
     }
   };
 
-  const displayValue = search || value;
+  const handleSuggestionClick = () => {
+    if (inputValue && onSuggestion) {
+      onSuggestion(inputValue);
+      setInputValue('');
+      setOpen(false);
+      setShowAddOption(false);
+    }
+  };
 
   return (
-    <div ref={wrapperRef} className="space-y-2">
-      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-        {Icon && <Icon className="w-4 h-4 text-gray-500" />}
-        {config.title}
-      </label>
+    <ThemeProvider theme={theme}>
       <div className="relative">
-        <input
-          type="text"
-          required
-          placeholder={loading ? 'Loading...' : `Select ${config.type}...`}
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
-          value={displayValue}
-          onChange={handleInputChange}
-          onFocus={() => setShowOptions(true)}
-          disabled={loading}
-        />
-        {loading ? (
-          <Loader2 className="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" />
-        ) : config.allowSuggestions && search && !filteredOptions.length ? (
-          <button
-            type="button"
-            onClick={handleSuggestion}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-700"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
-        ) : (
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-        )}
-        {showOptions && !loading && filteredOptions.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-            {filteredOptions.map((option) => (
-              <div
-                key={option}
-                className="px-4 py-2 hover:bg-blue-50 cursor-pointer transition-colors duration-150"
-                onClick={() => handleOptionSelect(option)}
-              >
+        <Autocomplete
+          value={value}
+          inputValue={inputValue}
+          onChange={handleChange}
+          onInputChange={handleInputChange}
+          options={[
+            ...(Array.isArray(options) ? options : []),
+            ...(inputValue && config.allowSuggestions && showAddOption && !options.includes(inputValue) ? ['__add_new__'] : [])
+          ]}
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          fullWidth
+          blurOnSelect
+          selectOnFocus
+          clearOnBlur={!config.allowSuggestions}
+          handleHomeEndKeys
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label={
+                <div className="flex items-center gap-2">
+                  {Icon && <Icon className="w-5 h-5 text-blue-600" />}
+                  {config.title}
+                </div>
+              }
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <div className="flex items-center gap-2">
+                    {(isSearching || loading) && <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />}
+                    {params.InputProps.endAdornment}
+                  </div>
+                ),
+              }}
+            />
+          )}
+          loading={isSearching || loading}
+          loadingText="Loading..."
+          noOptionsText={isSearching ? "Searching..." : "No options"}
+          renderOption={(props, option) => {
+            // Remove key from props to avoid the spread warning
+            const { key, ...otherProps } = props;
+
+            if (option === '__add_new__') {
+              return (
+                <div
+                  {...otherProps}
+                  key={key}
+                  className="p-2 transition-all duration-200"
+                >
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSuggestionClick();
+                    }}
+                    className="rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors duration-200 cursor-pointer"
+                  >
+                    <div className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-blue-700">Add "{inputValue}"</span>
+                        <span className="text-sm text-blue-600">Click to add to database</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div {...otherProps} key={key} className="px-4 py-2 hover:bg-gray-100">
                 {option}
               </div>
-            ))}
-          </div>
-        )}
+            );
+          }}
+          filterOptions={(x) => x}
+        />
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

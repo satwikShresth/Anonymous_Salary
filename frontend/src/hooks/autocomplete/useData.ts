@@ -1,12 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+
+interface UseDataOptions<T> {
+   initialData?: T[];
+   externalSetData?: Dispatch<SetStateAction<T[]>>;
+}
 
 export function useData<T>(
    fetchFn: () => Promise<T[]> | T[],
-   errorMessage: string = 'Failed to fetch data'
+   errorMessage: string = 'Failed to fetch data',
+   options: UseDataOptions<T> = {}
 ) {
-   const [data, setData] = useState<T[]>([]);
+   const { initialData = [], externalSetData } = options;
+
+   const [internalData, setInternalData] = useState<T[]>(initialData);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<Error | null>(null);
+
+   const setData = externalSetData || setInternalData;
+   const data = externalSetData ? initialData : internalData;
 
    useEffect(() => {
       const fetchData = async () => {
@@ -21,7 +32,7 @@ export function useData<T>(
       };
 
       fetchData();
-   }, [fetchFn, errorMessage]);
+   }, [fetchFn, errorMessage, setData]);
 
-   return { data, loading, error };
+   return { data, loading, error, setData };
 }

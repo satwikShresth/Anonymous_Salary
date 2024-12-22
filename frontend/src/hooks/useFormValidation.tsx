@@ -1,7 +1,4 @@
 import type { JobData } from '../types/job';
-import { companies } from '../data/companies';
-import { positions } from '../data/positions';
-import { locations } from '../data/locations';
 
 export function useFormValidation() {
   const validateCompanySection = (data: JobData) => {
@@ -9,20 +6,14 @@ export function useFormValidation() {
 
     if (!data.companyName) {
       errors.companyName = 'Company name is required';
-    } else if (!companies.includes(data.companyName)) {
-      errors.companyName = 'Please select a company from the list';
     }
 
     if (!data.position) {
       errors.position = 'Position is required';
-    } else if (!positions.includes(data.position)) {
-      errors.position = 'Please select a position from the list';
     }
 
     if (!data.location) {
       errors.location = 'Location is required';
-    } else if (!locations.includes(data.location)) {
-      errors.location = 'Please select a location from the list';
     }
 
     if (!data.workHours || data.workHours < 20 || data.workHours > 80) {
