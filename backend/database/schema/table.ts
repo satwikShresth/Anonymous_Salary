@@ -10,8 +10,9 @@ import {
    varchar,
 } from 'drizzle-orm/pg-core';
 import {
-   collegeYearType,
+   compensationType,
    coopCycleType,
+   coopYearType,
    decisionType,
    offerStatusType,
    programLevelType,
@@ -50,11 +51,6 @@ export const position = pgTable('position', {
    ),
 }));
 
-export const compensationType = pgTable('compensation_type', {
-   id: uuid('id').defaultRandom().primaryKey(),
-   value: varchar('value', { length: 255 }).notNull().unique(),
-});
-
 export const location = pgTable('location', {
    id: uuid('id').defaultRandom().primaryKey(),
    stateId: varchar('state_id', { length: 10 }).notNull(),
@@ -76,7 +72,7 @@ export const submission = pgTable('submission', {
    source: sourceType('source').notNull(),
    year: date('year').notNull(),
    coopCycle: coopCycleType('coop_cycle').notNull(),
-   collegeYear: collegeYearType('college_year').notNull(),
+   coopYear: coopYearType('coop_year_cycle').notNull(),
    locationId: uuid('location_id').notNull().references(() => location.id, {
       onDelete: 'cascade',
    }),
@@ -111,17 +107,15 @@ export const submissionMinor = pgTable('submission_minor', {
    pk: primaryKey(table.submissionId, table.minorId),
 }));
 
+// Compensation table definition
 export const compensation = pgTable('compensation', {
    id: uuid('id').defaultRandom().primaryKey(),
    submissionId: uuid('submission_id').notNull().references(
       () => submission.id,
       { onDelete: 'cascade' },
    ),
-   typeId: uuid('type_id').notNull().references(() => compensationType.id, {
-      onDelete: 'restrict',
-   }),
+   type: compensationType('type').notNull(),
    amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-   frequency: varchar('frequency', { length: 50 }),
    details: text('details'),
    createdAt: timestamp('created_at').notNull().defaultNow(),
 });

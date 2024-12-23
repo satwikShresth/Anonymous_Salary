@@ -4,6 +4,7 @@ import { RangeInput } from '../../../ui/rangeInput';
 import type { JobData } from '../../../../types/job';
 import { RadioGroup } from '../../../ui/radio';
 import { useCompanies, useLocations, usePositions } from '../../../../hooks/autocomplete';
+import { useSource } from '../../../../hooks/radio';
 
 export const suggestionConfigs = {
 	company: {
@@ -40,7 +41,9 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 
 	const { data: position, loading: loadingPositions, setData: setPositions, fetchOptions: fetchPositions, options: positionOptions } = usePositions();
 
-	const { data: location, loading: loadingLocations, setData: setLocation, fetchOptions: fetchLocations, options: locationOptions } = useLocations();
+	const { loading: loadingLocations, fetchOptions: fetchLocations, options: locationOptions } = useLocations();
+
+	const { data: sources } = useSource();
 
 	return (
 		<div className="space-y-6">
@@ -79,6 +82,7 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 						}
 					}}
 				/>
+
 				<AutocompleteInput
 					config={suggestionConfigs.location}
 					value={formData.location}
@@ -86,17 +90,11 @@ export function CompanySection({ formData, onChange }: CompanySectionProps) {
 					fetchOptions={fetchLocations}
 					options={locationOptions}
 					loading={loadingLocations}
-					onSuggestion={(value: string) => {
-						onChange({ location: value });
-						if (!location.includes(value)) {
-							setPositions([...location, value]);
-						}
-					}}
 				/>
 
 				<RadioGroup
 					label="Source"
-					options={['SCDC', 'external']}
+					options={sources}
 					value={formData.source}
 					onChange={(value) => onChange({ source: value as JobData['source'] })}
 					type="source"

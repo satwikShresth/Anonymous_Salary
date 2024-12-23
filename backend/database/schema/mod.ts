@@ -1,6 +1,7 @@
 import {
-   collegeYearType,
+   compensationType,
    coopCycleType,
+   coopYearType,
    decisionType,
    offerStatusType,
    programLevelType,
@@ -8,7 +9,6 @@ import {
 } from './enums.ts';
 import {
    companyRelations,
-   compensationRelations,
    locationRelations,
    majorRelations,
    minorRelations,
@@ -20,10 +20,10 @@ import {
 import {
    company,
    compensation,
-   compensationType,
    location,
    major,
    minor,
+   position,
    submission,
    submissionMajor,
    submissionMinor,
@@ -31,7 +31,7 @@ import {
 
 export const schema = {
    sourceType,
-   collegeYearType,
+   coopYearType,
    coopCycleType,
    decisionType,
    offerStatusType,
@@ -42,10 +42,10 @@ export const schema = {
    minorRelations,
    majorRelations,
    locationRelations,
-   compensationRelations,
    submissionRelations,
    companyRelations,
    company,
+   position,
    compensation,
    compensationType,
    location,
@@ -59,7 +59,7 @@ export const schema = {
 export const organizedSchemas = {
    enums: {
       sourceType,
-      collegeYearType,
+      coopYearType,
       coopCycleType,
       decisionType,
       offerStatusType,
@@ -72,7 +72,6 @@ export const organizedSchemas = {
       minorRelations,
       majorRelations,
       locationRelations,
-      compensationRelations,
       submissionRelations,
       companyRelations,
    },

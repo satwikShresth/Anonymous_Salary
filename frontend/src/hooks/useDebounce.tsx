@@ -6,19 +6,16 @@ export function createDebounce<T extends (...args: any[]) => any>(
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   const debouncedFunction = (...args: Parameters<T>) => {
-    // Clear existing timeout
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
 
-    // Create new timeout
     timeoutId = setTimeout(() => {
       func(...args);
       timeoutId = undefined;
     }, delay);
   };
 
-  // Add cancel method
   debouncedFunction.cancel = () => {
     if (timeoutId) {
       clearTimeout(timeoutId);

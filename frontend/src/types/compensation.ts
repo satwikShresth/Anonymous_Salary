@@ -1,4 +1,4 @@
-export type CompensationType = 'hourly' | 'stipend' | 'bonus' | 'housing' | 'transportation' | 'food' | 'other';
+export type CompensationType = 'Hourly' | 'Stipend' | 'Bonus' | 'Housing' | 'Transportation' | 'Food' | 'Other';
 
 export interface CompensationItem {
   type: CompensationType;
@@ -8,13 +8,13 @@ export interface CompensationItem {
 }
 
 export const compensationTypes: { value: CompensationType; label: string }[] = [
-  { value: 'hourly', label: 'Hourly Rate' },
-  { value: 'stipend', label: 'Stipend' },
-  { value: 'bonus', label: 'Bonus' },
-  { value: 'housing', label: 'Housing Allowance' },
-  { value: 'transportation', label: 'Transportation' },
-  { value: 'food', label: 'Food/Meals' },
-  { value: 'other', label: 'Other' }
+  { value: 'Hourly', label: 'Hourly Rate' },
+  { value: 'Stipend', label: 'Stipend' },
+  { value: 'Bonus', label: 'Bonus' },
+  { value: 'Housing', label: 'Housing Allowance' },
+  { value: 'Transportation', label: 'Transportation' },
+  { value: 'Food', label: 'Food/Meals' },
+  { value: 'Other', label: 'Other' }
 ];
 
 export interface CompensationRange {

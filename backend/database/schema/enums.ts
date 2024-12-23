@@ -5,7 +5,6 @@ export const sourceType = pgEnum('source_type', ['SCDC', 'External']);
 export const programLevelType = pgEnum('program_level_type', [
    'Undergraduate',
    'Graduate',
-   'PhD',
 ]);
 
 export const coopCycleType = pgEnum('coop_cycle_type', [
@@ -15,12 +14,20 @@ export const coopCycleType = pgEnum('coop_cycle_type', [
    'Summer/Fall',
 ]);
 
-export const collegeYearType = pgEnum('college_year_type', [
-   'First Year',
-   'Second Year',
-   'Third Year',
-   'Fourth Year',
-   'Fifth Year',
+export const compensationType = pgEnum('compensation_type', [
+   'Hourly',
+   'Stipend',
+   'Bonus',
+   'Housing',
+   'Transportation',
+   'Food',
+   'Other',
+]);
+
+export const coopYearType = pgEnum('coop_year_type', [
+   '1st',
+   '2nd',
+   '3rd',
 ]);
 
 export const offerStatusType = pgEnum('offer_status_type', [

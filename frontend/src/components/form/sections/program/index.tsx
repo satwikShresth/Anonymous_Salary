@@ -3,15 +3,27 @@ import { RadioGroup } from '../../../ui/radio';
 import { MultiSelect } from '../../../ui/multiselect';
 import type { JobData } from '../../../../types/job';
 import { useMajors, useMinors } from '../../../../hooks/autocomplete';
+import { fetchCoopCyles, useCoopCycles, useCoopYears, useProgram } from '../../../../hooks/radio';
 
 interface ProgramSectionProps {
 	formData: JobData;
 	onChange: (data: Partial<JobData>) => void;
 }
 
-export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
-	const { data: majors, loading: loadingMajors } = useMajors();
-	const { data: minors, loading: loadingMinors } = useMinors();
+export const ProgramSection = ({ formData, onChange }: ProgramSectionProps) => {
+	const {
+		loading: loadingMajors,
+		fetchOptions: fetchMajors,
+	} = useMajors();
+
+	const {
+		loading: loadingMinors,
+		fetchOptions: fetchMinors,
+	} = useMinors();
+
+	const { data: cycles } = useCoopCycles();
+	const { data: program } = useProgram();
+	const { data: coopYear } = useCoopYears();
 
 	return (
 		<div className="space-y-6">
@@ -20,55 +32,47 @@ export function ProgramSection({ formData, onChange }: ProgramSectionProps) {
 				Program Details
 			</h2>
 			<div className="grid grid-cols-1 gap-6">
+				<RadioGroup
+					label="Level"
+					options={program}
+					value={formData.level}
+					onChange={(value) => onChange({ level: value as JobData['level'] })}
+					type="level"
+				/>
 				<MultiSelect
 					label="Majors"
 					icon={<GraduationCap className="w-4 h-4 text-gray-500" />}
-					options={majors}
 					values={formData.majors}
 					onChange={(values) => onChange({ majors: values })}
+					fetchOptions={(value) => fetchMajors(formData.level, value)}
 					required
+					maxItems={5}
 					placeholder="Add a major..."
 					loading={loadingMajors}
 				/>
 				<MultiSelect
-					label="Minors"
+					label="Minors (optional)"
 					icon={<BookOpen className="w-4 h-4 text-gray-500" />}
-					options={minors}
 					values={formData.minors}
 					onChange={(values) => onChange({ minors: values })}
-					placeholder="Add a minor (optional)..."
+					fetchOptions={(value) => fetchMinors(formData.level, value)}
+					placeholder="Add a minor"
 					loading={loadingMinors}
 				/>
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-					<RadioGroup
-						label="Co-op Year"
-						options={['1st', '2nd', '3rd']}
-						value={formData.coopYear}
-						onChange={(value) => onChange({ coopYear: value as JobData['coopYear'] })}
-						type="year"
-					/>
-					<RadioGroup
-						label="Co-op Cycle"
-						options={['spring/summer', 'fall/winter']}
-						value={formData.coopCycle}
-						onChange={(value) => onChange({ coopCycle: value as JobData['coopCycle'] })}
-						type="cycle"
-					/>
-					<RadioGroup
-						label="Level"
-						options={['undergraduate', 'graduate']}
-						value={formData.level}
-						onChange={(value) => onChange({ level: value as JobData['level'] })}
-						type="level"
-					/>
-					<RadioGroup
-						label="Source"
-						options={['SCDC', 'external']}
-						value={formData.source}
-						onChange={(value) => onChange({ source: value as JobData['source'] })}
-						type="source"
-					/>
-				</div>
+				<RadioGroup
+					label="Co-op Cycle"
+					options={cycles}
+					value={formData.coopCycle}
+					onChange={(value) => onChange({ coopCycle: value as JobData['coopCycle'] })}
+					type="cycle"
+				/>
+				<RadioGroup
+					label="Co-op Year"
+					options={coopYear}
+					value={formData.coopYear}
+					onChange={(value) => onChange({ coopYear: value as JobData['coopYear'] })}
+					type="year"
+				/>
 			</div>
 		</div>
 	);

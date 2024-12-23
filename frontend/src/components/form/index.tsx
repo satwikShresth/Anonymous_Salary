@@ -36,11 +36,12 @@ export function JobForm({ onSubmit }: JobFormProps) {
 		e.preventDefault();
 	};
 
-	const handleFinalSubmit = () => {
+	const handleFinalSubmit = async () => {
+		console.log(formData);
 		onSubmit(formData);
-		resetFormData();
-		clearStepState();
-		goToStep(1, defaultJobData);
+		//resetFormData();
+		//clearStepState();
+		//goToStep(1, defaultJobData);
 	};
 
 	const renderStepContent = () => {

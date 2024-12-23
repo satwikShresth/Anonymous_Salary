@@ -1,8 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
    company,
-   compensation,
-   compensationType,
    location,
    major,
    minor,
@@ -48,18 +46,6 @@ export const submissionRelations = relations(submission, ({ one, many }) => ({
    }),
    submissionMajors: many(submissionMajor),
    submissionMinors: many(submissionMinor),
-   compensations: many(compensationType),
-}));
-
-export const compensationRelations = relations(compensation, ({ one }) => ({
-   submission: one(submission, {
-      fields: [compensation.submissionId],
-      references: [submission.id],
-   }),
-   type: one(compensationType, {
-      fields: [compensation.typeId],
-      references: [compensationType.id],
-   }),
 }));
 
 export const submissionMajorRelations = relations(

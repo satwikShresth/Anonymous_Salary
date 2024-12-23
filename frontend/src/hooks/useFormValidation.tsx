@@ -30,6 +30,10 @@ export function useFormValidation() {
       errors.salary = 'Please enter a valid salary or mark as N/A';
     }
 
+    if (data.compensations.length === 0) {
+      errors.compensations = 'At least one compensation item is required';
+    }
+
     data.compensations.forEach((comp, index) => {
       if (!comp.isNotApplicable && (!comp.amount || comp.amount <= 0)) {
         errors[`compensation_${index}`] = 'Please enter a valid amount or mark as N/A';

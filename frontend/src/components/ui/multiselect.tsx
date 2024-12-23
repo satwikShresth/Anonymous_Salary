@@ -1,38 +1,51 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Plus, Search, Loader2 } from 'lucide-react';
+import { X, Plus, Loader2 } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface MultiSelectProps {
   label: string;
   icon: React.ReactNode;
-  options: string[];
   values: string[];
   onChange: (values: string[]) => void;
+  fetchOptions: (search: string) => Promise<string[]>;
   maxItems?: number;
   required?: boolean;
   placeholder?: string;
-  loading?: boolean;
+  debounceMs?: number;
 }
 
 export function MultiSelect({
   label,
   icon,
-  options,
   values,
   onChange,
+  fetchOptions,
   maxItems = 5,
   required = false,
   placeholder = 'Select...',
-  loading = false
+  debounceMs = 300
 }: MultiSelectProps) {
   const [search, setSearch] = useState('');
   const [showOptions, setShowOptions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [options, setOptions] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = options.filter(
-    option =>
-      !values.includes(option) &&
-      option.toLowerCase().includes(search.toLowerCase())
-  );
+  // Create debounced fetch function
+  const handleSearch = async (searchTerm: string) => {
+    try {
+      setIsLoading(true);
+      const fetchedOptions = await fetchOptions(searchTerm);
+      setOptions(fetchedOptions.filter(option => !values.includes(option)));
+    } catch (error) {
+      console.error('Error fetching options:', error);
+      setOptions([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const debouncedSearch = useDebounce(handleSearch, debounceMs);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -44,11 +57,21 @@ export function MultiSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Fetch options when search changes
+  useEffect(() => {
+    if (search.trim()) {
+      debouncedSearch(search);
+    } else {
+      setOptions([]);
+    }
+  }, [search, debouncedSearch]);
+
   const handleAdd = (option: string) => {
     if (values.length < maxItems) {
       onChange([...values, option]);
       setSearch('');
       setShowOptions(false);
+      setOptions([]);
     }
   };
 
@@ -80,7 +103,6 @@ export function MultiSelect({
               type="button"
               onClick={() => handleRemove(value)}
               className="p-0.5 hover:bg-blue-200 rounded-full transition-colors duration-150"
-              disabled={loading}
             >
               <X className="w-3 h-3" />
             </button>
@@ -101,10 +123,9 @@ export function MultiSelect({
               }}
               onFocus={() => setShowOptions(true)}
               className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors duration-200"
-              placeholder={loading ? 'Loading...' : placeholder}
-              disabled={loading}
+              placeholder={placeholder}
             />
-            {loading ? (
+            {isLoading ? (
               <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 animate-spin" size={20} />
             ) : (
               <Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -112,18 +133,24 @@ export function MultiSelect({
           </div>
 
           {/* Dropdown */}
-          {showOptions && !loading && filteredOptions.length > 0 && (
+          {showOptions && (search.trim() || options.length > 0) && (
             <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-              {filteredOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className="w-full px-4 py-2 text-left hover:bg-blue-50 transition-colors duration-150"
-                  onClick={() => handleAdd(option)}
-                >
-                  {option}
-                </button>
-              ))}
+              {isLoading && search.trim() ? (
+                <div className="px-4 py-2 text-gray-500">Loading...</div>
+              ) : options.length > 0 ? (
+                options.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    className="w-full px-4 py-2 text-left hover:bg-blue-50 transition-colors duration-150"
+                    onClick={() => handleAdd(option)}
+                  >
+                    {option}
+                  </button>
+                ))
+              ) : search.trim() ? (
+                <div className="px-4 py-2 text-gray-500">No results found</div>
+              ) : null}
             </div>
           )}
         </div>

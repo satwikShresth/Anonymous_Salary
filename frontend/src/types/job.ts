@@ -9,14 +9,13 @@ export interface JobData {
   salaryNA: boolean;
   location: string;
   workHours: number;
-  coopYear: '1st' | '2nd' | '3rd';
-  coopCycle: 'spring/summer' | 'fall/winter';
+  coopYear: string;
+  coopCycle: string;
   compensations: CompensationItem[];
-  level: 'graduate' | 'undergraduate';
-  source: 'SCDC' | 'external';
-  // Decision fields with default values
-  offerStatus: 'Offered' | 'Qualified Alternative';
-  decision: 'Accepted' | 'Ranked';
+  level: string;
+  source: string;
+  offerStatus: string;
+  decision: string;
   decisionReason: string;
   otherNotes: string;
 }
@@ -31,9 +30,9 @@ export const defaultJobData: JobData = {
   location: '',
   workHours: 40,
   coopYear: '1st',
-  coopCycle: 'spring/summer',
+  coopCycle: 'Fall/Winter',
   compensations: [],
-  level: 'undergraduate',
+  level: 'Undergraduate',
   source: 'SCDC',
   offerStatus: 'Offered',
   decision: 'Accepted',

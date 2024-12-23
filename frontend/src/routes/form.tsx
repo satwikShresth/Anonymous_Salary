@@ -3,16 +3,17 @@ import { JobForm } from "../components/form";
 import type { JobData } from "../types/job.ts";
 import { ArrowLeft } from "lucide-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useFormSubmit } from "../hooks/useFormSubmit.tsx";
 
 export const Route = createFileRoute("/form")({
   component: AddCompData,
 });
 
 export function AddCompData() {
+  const { submitForm, error, success } = useFormSubmit();
 
   const handleSubmit = (job: JobData) => {
-    const jobs = JSON.parse(localStorage.getItem('jobs') || '[]');
-    localStorage.setItem('jobs', JSON.stringify([...jobs, job]));
+    submitForm(job)
   };
 
   return (
@@ -29,6 +30,8 @@ export function AddCompData() {
         <p className="text-gray-600 mt-2">Your information will be shared anonymously to help other co-op students</p>
       </div>
       <JobForm onSubmit={handleSubmit} />
+      {error && <div className="text-red-500 mt-2">{error}</div>}
+      {success && <div className="text-green-500 mt-2">Form submitted successfully!</div>}
     </div>
   );
 }

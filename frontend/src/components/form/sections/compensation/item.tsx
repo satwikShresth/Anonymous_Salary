@@ -13,43 +13,43 @@ interface CompensationItemProps {
 
 
 const compensationRanges: Record<CompensationType, CompensationRange> = {
-	hourly: {
+	Hourly: {
 		min: 10,
 		max: 120,
 		step: 0.5,
 		unit: '$/hr',
 	},
-	stipend: {
+	Stipend: {
 		min: 100,
 		max: 1000,
 		step: 50,
 		unit: '$/week',
 	},
-	bonus: {
+	Bonus: {
 		min: 1000,
 		max: 10000,
 		step: 500,
 		unit: '$'
 	},
-	housing: {
+	Housing: {
 		min: 500,
 		max: 5000,
 		step: 100,
 		unit: '$/month',
 	},
-	transportation: {
+	Transportation: {
 		min: 50,
 		max: 500,
 		step: 25,
 		unit: '$/month',
 	},
-	food: {
+	Food: {
 		min: 100,
 		max: 1000,
 		step: 50,
 		unit: '$/month',
 	},
-	other: {
+	Other: {
 		min: 0,
 		max: 10000,
 		step: 100,

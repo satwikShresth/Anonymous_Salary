@@ -1,18 +1,16 @@
-import { createRootRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { Briefcase } from "lucide-react";
 
 export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: () => {
-    throw redirect({
-      to: '/table'
-    })
+    window.location.href = '/table';
+    return null;
   },
   errorComponent: ({ error }) => {
     console.error(`Error: ${error}`)
-    throw redirect({
-      to: '/table'
-    })
+    window.location.href = '/table';
+    return null;
   }
 });
 
