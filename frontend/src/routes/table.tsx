@@ -1,8 +1,8 @@
 // src/routes/index.tsx
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { JobTable } from "../components/JobTable.tsx";
-import { FilterBar } from "../components/filters/FilterBar.tsx";
+import { JobTable } from "../components/table";
+import { FilterBar } from "../components/table/filters/FilterBar.tsx";
 import { Link } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
 import type { JobData } from "../types/job.ts";

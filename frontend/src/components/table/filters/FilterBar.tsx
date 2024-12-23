@@ -1,12 +1,11 @@
-import React from "react";
 import { Filter, SortAsc } from "lucide-react";
 import { FilterDropdown } from "./FilterDropdown.tsx";
 import { SortDropdown } from "./SortDropdown.tsx";
 import { SearchFilter } from "./SearchFilter.tsx";
-import type { FilterOptions, SortOption } from "../../types/filters.ts";
-import { companies } from "../../data/companies.ts";
-import { positions } from "../../data/positions.ts";
-import { majors } from "../../data/majors.ts";
+import type { FilterOptions, SortOption } from "../../../types/filters.ts";
+import { companies } from "../../../data/companies.ts";
+import { positions } from "../../../data/positions.ts";
+import { majors } from "../../../data/majors.ts";
 
 interface FilterBarProps {
   filters: FilterOptions;

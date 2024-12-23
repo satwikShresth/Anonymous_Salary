@@ -1,5 +1,5 @@
 import { join } from 'jsr:@std/path';
-import { db } from '../mod.ts';
+import { db } from 'db';
 import { programLevelType } from '../schema/enums.ts';
 import { major, minor } from '../schema/table.ts';
 
