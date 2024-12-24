@@ -1,58 +1,63 @@
 import { db } from 'db';
 import { schema } from 'db/schema';
-import { type JobData, JobDataSchema } from 'validation';
+import { type JobData } from 'validation';
+import { and, eq } from 'drizzle-orm';
 
 export async function handleJobSubmission(data: JobData) {
-   const validatedData = JobDataSchema.parse(data);
-   const [city, state] = validatedData.location.split(', ');
+   const validatedData = data;
+   console.log(validatedData);
 
    return await db.transaction(async (tx) => {
-      // Company
-      const [companyRecord] = await tx
-         .insert(schema.company)
-         .values({ name: validatedData.companyName })
-         .onConflictDoUpdate({
-            target: schema.company.name,
-            set: { name: validatedData.companyName },
-         })
-         .returning();
+      // Check if company exists, if not create a new one
+      let companyRecord = await tx
+         .select()
+         .from(schema.company)
+         .where(eq(schema.company.name, validatedData.companyName))
+         .limit(1);
 
-      // Position
-      const [positionRecord] = await tx
-         .insert(schema.position)
-         .values({
-            name: validatedData.position,
-            companyId: companyRecord.id,
-         })
-         .onConflictDoUpdate({
-            target: [schema.position.name, schema.position.companyId],
-            set: { name: validatedData.position },
-         })
-         .returning();
+      if (companyRecord.length === 0) {
+         [companyRecord] = await tx
+            .insert(schema.company)
+            .values({ name: validatedData.companyName })
+            .returning();
+      } else {
+         companyRecord = companyRecord[0];
+      }
 
-      // Location
-      const [locationRecord] = await tx
-         .insert(schema.location)
-         .values({
-            city,
-            state,
-            stateId: state.substring(0, 2).toUpperCase(),
-         })
-         .onConflictDoUpdate({
-            target: [schema.location.city, schema.location.state],
-            set: { stateId: state.substring(0, 2).toUpperCase() },
-         })
-         .returning();
+      // Check if position exists, if not create a new one
+      let positionRecord = await tx
+         .select()
+         .from(schema.position)
+         .where(
+            and(
+               eq(schema.position.name, validatedData.position),
+               eq(schema.position.companyId, companyRecord.id),
+            ),
+         )
+         .limit(1);
+
+      if (positionRecord.length === 0) {
+         [positionRecord] = await tx
+            .insert(schema.position)
+            .values({
+               name: validatedData.position,
+               companyId: companyRecord.id,
+            })
+            .returning();
+      } else {
+         positionRecord = positionRecord[0];
+      }
 
       // Submission
       const [submissionRecord] = await tx
          .insert(schema.submission)
          .values({
             positionId: positionRecord.id,
-            locationId: locationRecord.id,
+            locationId: validatedData.locationId, // Use pre-validated location
             programLevel: validatedData.level,
             source: validatedData.source,
             year: new Date(),
+            workHours: validatedData.workHours,
             coopCycle: validatedData.coopCycle,
             coopYear: validatedData.coopYear,
             offerStatus: validatedData.offerStatus,
@@ -63,47 +68,23 @@ export async function handleJobSubmission(data: JobData) {
          .returning();
 
       // Majors
-      const majorPromises = validatedData.majors.map(async (majorName) => {
-         const [majorRecord] = await tx
-            .insert(schema.major)
-            .values({
-               name: majorName,
-               programLevel: validatedData.level,
-            })
-            .onConflictDoUpdate({
-               target: schema.major.name,
-               set: { programLevel: validatedData.level },
-            })
-            .returning();
-
-         return tx
+      const majorPromises = validatedData.majorIds.map(async (majorId) => {
+         return await tx
             .insert(schema.submissionMajor)
             .values({
                submissionId: submissionRecord.id,
-               majorId: majorRecord.id,
+               majorId: majorId,
             })
             .onConflictDoNothing();
       });
 
       // Minors
-      const minorPromises = validatedData.minors.map(async (minorName) => {
-         const [minorRecord] = await tx
-            .insert(schema.minor)
-            .values({
-               name: minorName,
-               programLevel: validatedData.level,
-            })
-            .onConflictDoUpdate({
-               target: schema.minor.name,
-               set: { programLevel: validatedData.level },
-            })
-            .returning();
-
-         return tx
+      const minorPromises = validatedData.minorIds.map(async (minorId) => {
+         return await tx
             .insert(schema.submissionMinor)
             .values({
                submissionId: submissionRecord.id,
-               minorId: minorRecord.id,
+               minorId: minorId,
             })
             .onConflictDoNothing();
       });

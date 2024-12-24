@@ -1,8 +1,9 @@
-CREATE TYPE "public"."college_year_type" AS ENUM('First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Fifth Year');--> statement-breakpoint
+CREATE TYPE "public"."compensation_type" AS ENUM('Hourly', 'Stipend', 'Bonus', 'Housing', 'Transportation', 'Food', 'Other');--> statement-breakpoint
 CREATE TYPE "public"."coop_cycle_type" AS ENUM('Fall/Winter', 'Winter/Spring', 'Spring/Summer', 'Summer/Fall');--> statement-breakpoint
+CREATE TYPE "public"."coop_year_type" AS ENUM('1st', '2nd', '3rd');--> statement-breakpoint
 CREATE TYPE "public"."decision_type" AS ENUM('Accepted', 'Ranked');--> statement-breakpoint
 CREATE TYPE "public"."offer_status_type" AS ENUM('Offered', 'Qualified Alternative');--> statement-breakpoint
-CREATE TYPE "public"."program_level_type" AS ENUM('Undergraduate', 'Graduate', 'PhD');--> statement-breakpoint
+CREATE TYPE "public"."program_level_type" AS ENUM('Undergraduate', 'Graduate');--> statement-breakpoint
 CREATE TYPE "public"."source_type" AS ENUM('SCDC', 'External');--> statement-breakpoint
 CREATE TABLE "company" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
@@ -14,17 +15,10 @@ CREATE TABLE "company" (
 CREATE TABLE "compensation" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"submission_id" uuid NOT NULL,
-	"type_id" uuid NOT NULL,
+	"type" "compensation_type" NOT NULL,
 	"amount" numeric(10, 2) NOT NULL,
-	"frequency" varchar(50),
 	"details" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "compensation_type" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"value" varchar(255) NOT NULL,
-	CONSTRAINT "compensation_type_value_unique" UNIQUE("value")
 );
 --> statement-breakpoint
 CREATE TABLE "location" (
@@ -36,12 +30,14 @@ CREATE TABLE "location" (
 --> statement-breakpoint
 CREATE TABLE "major" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"program_level" "program_level_type" NOT NULL,
 	"name" varchar(255) NOT NULL,
 	CONSTRAINT "major_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "minor" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"program_level" "program_level_type" NOT NULL,
 	"name" varchar(255) NOT NULL,
 	CONSTRAINT "minor_name_unique" UNIQUE("name")
 );
@@ -60,8 +56,9 @@ CREATE TABLE "submission" (
 	"source" "source_type" NOT NULL,
 	"year" date NOT NULL,
 	"coop_cycle" "coop_cycle_type" NOT NULL,
-	"college_year" "college_year_type" NOT NULL,
+	"coop_year" "coop_year_type" NOT NULL,
 	"location_id" uuid NOT NULL,
+	"work_hours" integer DEFAULT 40 NOT NULL,
 	"offer_status" "offer_status_type" NOT NULL,
 	"decision" "decision_type" NOT NULL,
 	"reason" varchar(100),
@@ -82,7 +79,6 @@ CREATE TABLE "submission_minor" (
 );
 --> statement-breakpoint
 ALTER TABLE "compensation" ADD CONSTRAINT "compensation_submission_id_submission_id_fk" FOREIGN KEY ("submission_id") REFERENCES "public"."submission"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "compensation" ADD CONSTRAINT "compensation_type_id_compensation_type_id_fk" FOREIGN KEY ("type_id") REFERENCES "public"."compensation_type"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "position" ADD CONSTRAINT "position_company_id_company_id_fk" FOREIGN KEY ("company_id") REFERENCES "public"."company"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "submission" ADD CONSTRAINT "submission_position_id_position_id_fk" FOREIGN KEY ("position_id") REFERENCES "public"."position"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "submission" ADD CONSTRAINT "submission_location_id_location_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."location"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

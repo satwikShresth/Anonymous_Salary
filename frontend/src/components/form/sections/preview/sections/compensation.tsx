@@ -26,18 +26,8 @@ export function PreviewCompensation({ formData }: PreviewCompensationProps) {
 			</h3>
 			<div className="space-y-4">
 				<PreviewItem
-					icon={<DollarSign className="w-4 h-4" />}
-					label="Hourly Rate"
-					value={formData.salaryNA ? 'N/A' : `$${formData.salary}/hr`}
-				/>
-				<PreviewItem
-					icon={<Clock className="w-4 h-4" />}
-					label="Work Hours"
-					value={`${formData.workHours} hrs/week`}
-				/>
-				<PreviewItem
 					icon={<Gift className="w-4 h-4" />}
-					label="Additional Benefits"
+					label="Benefits"
 					value={formatCompensations()}
 					multiline
 				/>

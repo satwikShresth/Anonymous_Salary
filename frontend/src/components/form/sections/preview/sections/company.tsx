@@ -1,4 +1,4 @@
-import { Building2, Briefcase, MapPin } from 'lucide-react';
+import { Building2, Briefcase, MapPin, Clock } from 'lucide-react';
 import type { JobData } from '../../../../../types/job';
 import { PreviewItem } from '../components/item.tsx';
 
@@ -28,6 +28,11 @@ export function PreviewCompany({ formData }: PreviewCompanyProps) {
 					icon={<MapPin className="w-4 h-4" />}
 					label="Location"
 					value={formData.location}
+				/>
+				<PreviewItem
+					icon={<Clock className="w-4 h-4" />}
+					label="Work Hours"
+					value={`${formData.workHours} hrs/week`}
 				/>
 			</div>
 		</div>

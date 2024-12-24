@@ -1,5 +1,5 @@
 {
-  "id": "ab56a079-3b54-456a-a480-6950cbb38da8",
+  "id": "81b72184-5003-4b2b-8fc5-eea862ff1698",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -62,9 +62,10 @@
           "primaryKey": false,
           "notNull": true
         },
-        "type_id": {
-          "name": "type_id",
-          "type": "uuid",
+        "type": {
+          "name": "type",
+          "type": "compensation_type",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
@@ -73,12 +74,6 @@
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
-        },
-        "frequency": {
-          "name": "frequency",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false
         },
         "details": {
           "name": "details",
@@ -108,57 +103,10 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "compensation_type_id_compensation_type_id_fk": {
-          "name": "compensation_type_id_compensation_type_id_fk",
-          "tableFrom": "compensation",
-          "tableTo": "compensation_type",
-          "columnsFrom": [
-            "type_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "restrict",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.compensation_type": {
-      "name": "compensation_type",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "value": {
-          "name": "value",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "compensation_type_value_unique": {
-          "name": "compensation_type_value_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "value"
-          ]
-        }
-      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -234,6 +182,13 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "program_level": {
+          "name": "program_level",
+          "type": "program_level_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "varchar(255)",
@@ -267,6 +222,13 @@
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
+        },
+        "program_level": {
+          "name": "program_level",
+          "type": "program_level_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
         },
         "name": {
           "name": "name",
@@ -410,9 +372,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "college_year": {
-          "name": "college_year",
-          "type": "college_year_type",
+        "coop_year": {
+          "name": "coop_year",
+          "type": "coop_year_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -422,6 +384,13 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "work_hours": {
+          "name": "work_hours",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 40
         },
         "offer_status": {
           "name": "offer_status",
@@ -614,15 +583,17 @@
     }
   },
   "enums": {
-    "public.college_year_type": {
-      "name": "college_year_type",
+    "public.compensation_type": {
+      "name": "compensation_type",
       "schema": "public",
       "values": [
-        "First Year",
-        "Second Year",
-        "Third Year",
-        "Fourth Year",
-        "Fifth Year"
+        "Hourly",
+        "Stipend",
+        "Bonus",
+        "Housing",
+        "Transportation",
+        "Food",
+        "Other"
       ]
     },
     "public.coop_cycle_type": {
@@ -633,6 +604,15 @@
         "Winter/Spring",
         "Spring/Summer",
         "Summer/Fall"
+      ]
+    },
+    "public.coop_year_type": {
+      "name": "coop_year_type",
+      "schema": "public",
+      "values": [
+        "1st",
+        "2nd",
+        "3rd"
       ]
     },
     "public.decision_type": {
@@ -656,8 +636,7 @@
       "schema": "public",
       "values": [
         "Undergraduate",
-        "Graduate",
-        "PhD"
+        "Graduate"
       ]
     },
     "public.source_type": {

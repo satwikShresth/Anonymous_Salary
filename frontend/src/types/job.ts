@@ -5,8 +5,6 @@ export interface JobData {
   position: string;
   majors: string[];
   minors: string[];
-  salary: number;
-  salaryNA: boolean;
   location: string;
   workHours: number;
   coopYear: string;
@@ -25,8 +23,6 @@ export const defaultJobData: JobData = {
   position: '',
   majors: [],
   minors: [],
-  salary: 50,
-  salaryNA: false,
   location: '',
   workHours: 40,
   coopYear: '1st',

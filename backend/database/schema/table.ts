@@ -1,6 +1,7 @@
 import {
    date,
    decimal,
+   integer,
    pgTable,
    primaryKey,
    text,
@@ -72,10 +73,11 @@ export const submission = pgTable('submission', {
    source: sourceType('source').notNull(),
    year: date('year').notNull(),
    coopCycle: coopCycleType('coop_cycle').notNull(),
-   coopYear: coopYearType('coop_year_cycle').notNull(),
+   coopYear: coopYearType('coop_year').notNull(),
    locationId: uuid('location_id').notNull().references(() => location.id, {
       onDelete: 'cascade',
    }),
+   workHours: integer('work_hours').notNull().default(40),
    offerStatus: offerStatusType('offer_status').notNull(),
    decision: decisionType('decision').notNull(),
    reason: varchar('reason', { length: 100 }),

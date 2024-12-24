@@ -24,7 +24,6 @@ export function JobTable({ jobs }: JobTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
-  const [densePadding, setDensePadding] = useState(false);
 
   // Column visibility state
   const [columnAnchorEl, setColumnAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -67,8 +66,6 @@ export function JobTable({ jobs }: JobTableProps) {
     <Paper elevation={2} className="rounded-xl">
       <TableToolbar
         onColumnsClick={(e) => setColumnAnchorEl(e.currentTarget)}
-        densePadding={densePadding}
-        onDensePaddingChange={(e) => setDensePadding(e.target.checked)}
       />
 
       <div className="rounded-xl border border-gray-200 overflow-hidden">
@@ -76,11 +73,9 @@ export function JobTable({ jobs }: JobTableProps) {
           <table className="w-full">
             <TableHeader
               headerGroups={table.getHeaderGroups()}
-              densePadding={densePadding}
             />
             <TableBody
               rows={table.getRowModel().rows}
-              densePadding={densePadding}
             />
           </table>
         </div>

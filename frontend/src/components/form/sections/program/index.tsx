@@ -3,7 +3,7 @@ import { RadioGroup } from '../../../ui/radio';
 import { MultiSelect } from '../../../ui/multiselect';
 import type { JobData } from '../../../../types/job';
 import { useMajors, useMinors } from '../../../../hooks/autocomplete';
-import { fetchCoopCyles, useCoopCycles, useCoopYears, useProgram } from '../../../../hooks/radio';
+import { useCoopCycles, useCoopYears, useProgram } from '../../../../hooks/radio';
 
 interface ProgramSectionProps {
 	formData: JobData;
@@ -15,15 +15,21 @@ export const ProgramSection = ({ formData, onChange }: ProgramSectionProps) => {
 		loading: loadingMajors,
 		fetchOptions: fetchMajors,
 	} = useMajors();
-
 	const {
 		loading: loadingMinors,
 		fetchOptions: fetchMinors,
 	} = useMinors();
-
 	const { data: cycles } = useCoopCycles();
 	const { data: program } = useProgram();
 	const { data: coopYear } = useCoopYears();
+
+	const handleLevelChange = (value: JobData['level']) => {
+		onChange({
+			level: value,
+			majors: [], // Clear majors
+			minors: [], // Clear minors
+		});
+	};
 
 	return (
 		<div className="space-y-6">
@@ -36,7 +42,7 @@ export const ProgramSection = ({ formData, onChange }: ProgramSectionProps) => {
 					label="Level"
 					options={program}
 					value={formData.level}
-					onChange={(value) => onChange({ level: value as JobData['level'] })}
+					onChange={handleLevelChange}
 					type="level"
 				/>
 				<MultiSelect

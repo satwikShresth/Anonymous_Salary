@@ -12,6 +12,7 @@ interface MultiSelectProps {
   required?: boolean;
   placeholder?: string;
   debounceMs?: number;
+  loading?: boolean
 }
 
 export function MultiSelect({
@@ -23,11 +24,12 @@ export function MultiSelect({
   maxItems = 5,
   required = false,
   placeholder = 'Select...',
-  debounceMs = 300
+  debounceMs = 300,
+  loading = false
 }: MultiSelectProps) {
   const [search, setSearch] = useState('');
   const [showOptions, setShowOptions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(loading);
   const [options, setOptions] = useState<string[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
 

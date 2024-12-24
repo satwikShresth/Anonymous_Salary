@@ -22,10 +22,6 @@ export function JobDetails({ job }: JobDetailsProps) {
         <Typography>{job.location}</Typography>
       </div>
       <div>
-        <Typography variant="subtitle2" color="text.secondary">Salary</Typography>
-        <Typography>{job.salaryNA ? 'N/A' : `$${job.salary}/hr`}</Typography>
-      </div>
-      <div>
         <Typography variant="subtitle2" color="text.secondary">Work Schedule</Typography>
         <Typography>{job.workHours}hrs/week</Typography>
       </div>
