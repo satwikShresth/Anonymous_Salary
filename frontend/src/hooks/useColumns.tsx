@@ -1,7 +1,7 @@
-// hooks/useColumns.tsx
 import { useMemo } from 'react';
 import { createColumnHelper } from '@tanstack/react-table';
 import type { JobData } from '../types/job';
+import type { CompensationItem } from '../types/compensation';
 import { IconButton, Chip, Tooltip } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -9,6 +9,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import SchoolIcon from '@mui/icons-material/School';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { compensationTypes } from "../types/compensation"
 
 interface UseColumnsProps {
   onOpenDetails: (job: JobData) => void;
@@ -16,6 +17,30 @@ interface UseColumnsProps {
 
 export function useColumns({ onOpenDetails }: UseColumnsProps) {
   const columnHelper = createColumnHelper<JobData>();
+
+  const formatCompensation = (compensations: CompensationItem[]) => {
+    if (!compensations?.length) return 'N/A';
+
+    return (
+      <div className="flex flex-col gap-1">
+        {compensations.map((comp, index) => {
+          const typeInfo = compensationTypes.find(t => t.value === comp.type);
+          if (!typeInfo || comp.isNotApplicable) return null;
+
+          return (
+            <div key={index} className="whitespace-nowrap text-sm">
+              <span className="font-medium">{typeInfo.label}:</span>{' '}
+              {comp.amount ? (
+                <span className="text-green-600">
+                  ${comp.amount}/{typeInfo.freq}
+                </span>
+              ) : 'N/A'}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   const columns = useMemo(
     () => [
@@ -81,17 +106,14 @@ export function useColumns({ onOpenDetails }: UseColumnsProps) {
           />
         ),
       }),
-      columnHelper.accessor(row => row.salaryNA ? 'N/A' : `$${row.salary}/hr`, {
-        id: 'salary',
+      columnHelper.accessor('compensations', {
         header: () => (
           <div className="flex items-center gap-2 text-gray-700">
             <AttachMoneyIcon fontSize="small" />
-            <span>Salary</span>
+            <span>Compensation</span>
           </div>
         ),
-        cell: info => (
-          <span className="font-medium text-green-600">{info.getValue()}</span>
-        ),
+        cell: info => formatCompensation(info.getValue()),
       }),
       columnHelper.accessor('majors', {
         header: () => (

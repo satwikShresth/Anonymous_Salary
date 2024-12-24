@@ -40,7 +40,7 @@ export function CompensationSection({ formData, onChange, showErrors }: Compensa
 		});
 	};
 
-	const showError = showErrors && !formData.salaryNA && (!formData.salary || formData.salary <= 0);
+	const showError = showErrors
 
 	return (
 		<div className="space-y-6" >

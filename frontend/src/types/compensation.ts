@@ -7,14 +7,13 @@ export interface CompensationItem {
   isNotApplicable?: boolean;
 }
 
-export const compensationTypes: { value: CompensationType; label: string }[] = [
-  { value: 'Hourly', label: 'Hourly Rate' },
-  { value: 'Stipend', label: 'Stipend' },
-  { value: 'Bonus', label: 'Bonus' },
-  { value: 'Housing', label: 'Housing Allowance' },
-  { value: 'Transportation', label: 'Transportation' },
-  { value: 'Food', label: 'Food/Meals' },
-  { value: 'Other', label: 'Other' }
+export const compensationTypes: { value: CompensationType; label: string; freq: string }[] = [
+  { value: 'Hourly', label: 'Hourly Rate', freq: "hrs" },
+  { value: 'Stipend', label: 'Stipend', freq: "week" },
+  { value: 'Housing', label: 'Housing Allowance', freq: "coop" },
+  { value: 'Transportation', label: 'Transportation', freq: "month" },
+  { value: 'Food', label: 'Food/Meals', freq: "month" },
+  { value: 'Other', label: 'Other', freq: "coop" }
 ];
 
 export interface CompensationRange {

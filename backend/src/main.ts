@@ -4,7 +4,7 @@ import { cors } from '@hono/hono/cors';
 import { validator } from '@hono/hono/validator';
 import { db } from 'db';
 import { schema } from 'db/schema';
-import { and, eq, ilike, or } from 'drizzle-orm';
+import { and, asc, count, eq, gt, ilike, or, sql } from 'drizzle-orm';
 import { handleJobSubmission } from './handler/submission.ts';
 import { z } from 'zod';
 import qs from 'qs';
@@ -114,6 +114,38 @@ const app = new Hono()
 
       return c.json(results.map((item) => `${item.city}, ${item.stateId}`));
    })
+   .get('/submissions/companies', async (c) => {
+      const query = c.req.query('q');
+      const company = schema.company;
+      const position = schema.position;
+      const submission = schema.submission;
+
+      const results = await db
+         .selectDistinct({ name: company.name })
+         .from(submission)
+         .innerJoin(position, eq(submission.positionId, position.id))
+         .innerJoin(company, eq(position.companyId, company.id))
+         .where(query ? ilike(company.name, `%${query}%`) : undefined)
+         .orderBy(company.name);
+
+      return c.json(results.map((item) => item.name));
+   })
+   .get('/submissions/positions', async (c) => {
+      const query = c.req.query('q');
+      const company = schema.company;
+      const position = schema.position;
+      const submission = schema.submission;
+
+      const results = await db
+         .selectDistinct({ name: position.name })
+         .from(submission)
+         .innerJoin(position, eq(submission.positionId, position.id))
+         .innerJoin(company, eq(position.companyId, company.id))
+         .where(query ? ilike(position.name, `%${query}%`) : undefined)
+         .orderBy(position.name);
+
+      return c.json(results.map((item) => item.name));
+   })
    .get('/companies', async (c) => {
       const query = c.req.query('q');
       const company = schema.company;
@@ -175,24 +207,29 @@ const app = new Hono()
    )
    .get('/submissions', async (c) => {
       const queryParams = c.req.query();
-      const company = schema.company;
-      const major = schema.major;
-      const minor = schema.minor;
-      const submissionMajor = schema.submissionMajor;
-      const submissionMinor = schema.submissionMinor;
-      const position = schema.position;
-      const submission = schema.submission;
-      const location = schema.location;
-      const compensation = schema.compensation;
+      const {
+         cursor,
+         limit: rawLimit,
+         ...filterParams
+      } = queryParams;
 
-      // Pagination parameters
-      const page = parseInt(queryParams.page as string) || 1;
-      const limit = Math.min(parseInt(queryParams.limit as string) || 10, 50); // Max 50 items per page
-      const offset = (page - 1) * limit;
+      // Ensure reasonable limit with a maximum cap
+      const limit = Math.min(parseInt(rawLimit as string) || 10, 50);
 
-      // Remove pagination params from filters
-      const { page: _, limit: __, ...filterParams } = queryParams;
+      // Schema references
+      const {
+         company,
+         major,
+         minor,
+         submissionMajor,
+         submissionMinor,
+         position,
+         submission,
+         location,
+         compensation,
+      } = schema;
 
+      // Filter conditions
       const filters = {
          companyName: (value: string) => ilike(company.name, `%${value}%`),
          position: (value: string) => ilike(position.name, `%${value}%`),
@@ -206,18 +243,23 @@ const app = new Hono()
          .map(([key, value]) => filters[key]?.(value))
          .filter(Boolean);
 
-      // Get total count for pagination
-      const totalCountResult = await db
-         .select({ count: sql<number>`count(*)` })
+      // Create a subquery for better performance with pagination
+      const subQuery = db
+         .select({
+            id: submission.id,
+         })
          .from(submission)
          .innerJoin(position, eq(position.id, submission.positionId))
          .innerJoin(company, eq(company.id, position.companyId))
-         .innerJoin(location, eq(location.id, submission.locationId))
-         .where(queries.length > 0 ? or(...queries) : undefined);
+         .where(queries.length > 0 ? and(...queries) : undefined)
+         .where(
+            cursor ? gt(submission.id, parseInt(cursor as string)) : undefined,
+         )
+         .orderBy(asc(submission.id))
+         .limit(limit)
+         .as('sq');
 
-      const totalCount = Number(totalCountResult[0].count);
-      const totalPages = Math.ceil(totalCount / limit);
-
+      // Main query using the subquery
       const query = await db
          .select({
             id: submission.id,
@@ -233,42 +275,44 @@ const app = new Hono()
             coopYear: submission.coopYear,
             coopCycle: submission.coopCycle,
             city: location.city,
-            state: location.state,
+            state: location.stateId,
          })
          .from(submission)
          .innerJoin(position, eq(position.id, submission.positionId))
          .innerJoin(company, eq(company.id, position.companyId))
          .innerJoin(location, eq(location.id, submission.locationId))
-         .where(queries.length > 0 ? or(...queries) : undefined)
-         .limit(limit)
-         .offset(offset);
+         .innerJoin(subQuery, eq(subQuery.id, submission.id))
+         .orderBy(asc(submission.id));
 
       const submissions = await Promise.all(
          query.map(async (job) => {
             const submissionId = job.id;
 
-            const majors = await db
-               .select({ name: major.name })
-               .from(submissionMajor)
-               .innerJoin(major, eq(major.id, submissionMajor.majorId))
-               .where(eq(submissionMajor.submissionId, submissionId));
+            const [majors, minors, compensations] = await Promise.all([
+               db
+                  .select({ name: major.name })
+                  .from(submissionMajor)
+                  .innerJoin(major, eq(major.id, submissionMajor.majorId))
+                  .where(eq(submissionMajor.submissionId, submissionId)),
 
-            const minors = await db
-               .select({ name: minor.name })
-               .from(submissionMinor)
-               .innerJoin(minor, eq(minor.id, submissionMinor.minorId))
-               .where(eq(submissionMinor.submissionId, submissionId));
+               db
+                  .select({ name: minor.name })
+                  .from(submissionMinor)
+                  .innerJoin(minor, eq(minor.id, submissionMinor.minorId))
+                  .where(eq(submissionMinor.submissionId, submissionId)),
 
-            const compensations = await db
-               .select({
-                  type: compensation.type,
-                  amount: compensation.amount,
-                  description: compensation.details,
-               })
-               .from(compensation)
-               .where(eq(compensation.submissionId, submissionId));
+               db
+                  .select({
+                     type: compensation.type,
+                     amount: compensation.amount,
+                     description: compensation.details,
+                  })
+                  .from(compensation)
+                  .where(eq(compensation.submissionId, submissionId)),
+            ]);
 
             return {
+               id: job.id, // Include ID for cursor-based pagination
                companyName: job.companyName,
                position: job.position,
                majors: majors.map((m) => m.name),
@@ -293,19 +337,22 @@ const app = new Hono()
          }),
       );
 
+      // Get the last ID for next page cursor
+      const lastItem = submissions[submissions.length - 1];
+      const nextCursor = lastItem?.id;
+
+      // Check if there are more items
+      const hasMore = submissions.length === limit;
+
       return c.json({
          data: submissions,
          pagination: {
-            page,
             limit,
-            totalItems: totalCount,
-            totalPages,
-            hasNextPage: page < totalPages,
-            hasPreviousPage: page > 1,
+            nextCursor: hasMore ? nextCursor : null,
+            hasMore,
          },
       });
    });
-
 const port = Deno.env.get('PORT') || 3000;
 console.log(`Server is running on port ${port}`);
 

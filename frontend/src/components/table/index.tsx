@@ -1,5 +1,5 @@
-// JobTable.tsx
-import { useState } from 'react';
+// JobTable/index.tsx
+import { useState, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle, Paper } from '@mui/material';
 import {
   getCoreRowModel,
@@ -9,28 +9,48 @@ import {
 import type { JobData } from '../../types/job';
 import { TableHeader } from './header';
 import { TableBody } from './body';
-import { TablePaginationBar } from './paginationBar';
 import { TableToolbar } from './toolbar';
 import { TableColumnVisibility } from './columnVisibility';
 import { useColumns } from '../../hooks/useColumns';
 import { JobDetails } from './jobDetails';
 
 interface JobTableProps {
-  jobs: JobData[]; // This will receive the filtered jobs
+  jobs: JobData[];
+  isLoading: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
 }
 
-export function JobTable({ jobs }: JobTableProps) {
-  // Table state
+export function JobTable({
+  jobs,
+  isLoading,
+  hasMore,
+  onLoadMore,
+}: JobTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [page, setPage] = useState(0);
-
-  // Column visibility state
   const [columnAnchorEl, setColumnAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-  // Dialog state
   const [selectedJob, setSelectedJob] = useState<JobData | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Ref for intersection observer
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useCallback((node: HTMLDivElement | null) => {
+    if (isLoading) return;
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        onLoadMore();
+      }
+    });
+
+    if (node) {
+      observerRef.current.observe(node);
+    }
+  }, [isLoading, hasMore, onLoadMore]);
 
   const handleOpenDetails = (job: JobData) => {
     setSelectedJob(job);
@@ -42,12 +62,10 @@ export function JobTable({ jobs }: JobTableProps) {
     setSelectedJob(null);
   };
 
-  // Get column definitions
   const columns = useColumns({
     onOpenDetails: handleOpenDetails,
   });
 
-  // Initialize table
   const table = useReactTable({
     data: jobs,
     columns,
@@ -55,11 +73,8 @@ export function JobTable({ jobs }: JobTableProps) {
     onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnVisibility,
-      pagination: {
-        pageIndex: page,
-        pageSize: rowsPerPage,
-      },
     },
+    manualPagination: true,
   });
 
   return (
@@ -67,30 +82,29 @@ export function JobTable({ jobs }: JobTableProps) {
       <TableToolbar
         onColumnsClick={(e) => setColumnAnchorEl(e.currentTarget)}
       />
-
       <div className="rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <TableHeader
-              headerGroups={table.getHeaderGroups()}
-            />
-            <TableBody
-              rows={table.getRowModel().rows}
-            />
+            <TableHeader headerGroups={table.getHeaderGroups()} />
+            <TableBody rows={table.getRowModel().rows} />
           </table>
+
+          {/* Loading/Intersection Observer trigger */}
+          <div
+            ref={loadingRef}
+            className="w-full p-4 text-center"
+          >
+            {isLoading && (
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+              </div>
+            )}
+            {!isLoading && !hasMore && jobs.length > 0 && (
+              <div className="text-gray-500">No more jobs to load</div>
+            )}
+          </div>
         </div>
       </div>
-
-      <TablePaginationBar
-        count={table.getFilteredRowModel().rows.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={(_, newPage) => setPage(newPage)}
-        onRowsPerPageChange={(e) => {
-          setRowsPerPage(parseInt(e.target.value, 10));
-          setPage(0);
-        }}
-      />
 
       <TableColumnVisibility
         anchorEl={columnAnchorEl}

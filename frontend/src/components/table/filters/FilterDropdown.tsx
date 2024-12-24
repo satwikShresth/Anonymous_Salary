@@ -26,11 +26,10 @@ export function FilterDropdown({ label, options, selected, onChange }: FilterDro
     <div ref={dropdownRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm ${
-          selected
-            ? 'bg-blue-100 text-blue-800'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-        }`}
+        className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm ${selected
+          ? 'bg-blue-100 text-blue-800'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
       >
         {label}
         {selected ? (
@@ -45,15 +44,14 @@ export function FilterDropdown({ label, options, selected, onChange }: FilterDro
           <ChevronDown className="w-4 h-4 ml-1" />
         )}
       </button>
-      
+
       {isOpen && (
         <div className="absolute z-10 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 w-48">
           {options.map((option) => (
             <button
               key={option}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${
-                selected === option ? 'text-blue-600 font-medium' : 'text-gray-700'
-              }`}
+              className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${selected === option ? 'text-blue-600 font-medium' : 'text-gray-700'
+                }`}
               onClick={() => {
                 onChange(option);
                 setIsOpen(false);

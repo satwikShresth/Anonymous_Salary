@@ -1,14 +1,15 @@
-// src/routes/index.tsx
+// route/table.tsx
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { JobTable } from "../components/table";
-import { FilterBar } from "../components/table/filters/FilterBar.tsx";
+import { FilterBar } from "../components/table/filters/FilterBar";
 import { Link } from "@tanstack/react-router";
 import { PlusCircle } from "lucide-react";
-import type { JobData } from "../types/job.ts";
-import type { FilterOptions, SortOption } from "../types/filters.ts";
-import { mockJobs } from "../data/mockJobs.ts";
-import { filterJobs, sortJobs } from "../utils/jobFilters.ts";
+import type { FilterOptions, SortOption } from "../types/filters";
+import { useJobs } from "../hooks/useJobs";
+import { sortJobs } from "../utils/jobFilters";
+
+const INITIAL_LIMIT = 20;
 
 const initialFilters: FilterOptions = {
   companyName: null,
@@ -24,20 +25,29 @@ export const Route = createFileRoute("/table")({
   component: IndexPage,
 });
 
-
 function IndexPage() {
   const [filters, setFilters] = useState<FilterOptions>(initialFilters);
   const [sortOption, setSortOption] = useState<SortOption>("salary-desc");
 
-  useEffect(() => {
-    const existingJobs = localStorage.getItem("jobs");
-    if (!existingJobs) {
-      localStorage.setItem("jobs", JSON.stringify(mockJobs));
-    }
-  }, []);
+  const {
+    jobs,
+    isLoading,
+    error,
+    hasMore,
+    loadMore
+  } = useJobs(filters, INITIAL_LIMIT);
 
-  const jobs: JobData[] = JSON.parse(localStorage.getItem("jobs") || "[]");
-  const filteredJobs = sortJobs(filterJobs(jobs, filters), sortOption);
+  const sortedJobs = sortJobs(jobs, sortOption);
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -66,7 +76,14 @@ function IndexPage() {
         onSortChange={setSortOption}
       />
 
-      <JobTable jobs={filteredJobs} />
+      <JobTable
+        jobs={sortedJobs}
+        isLoading={isLoading}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
+        limit={INITIAL_LIMIT}
+      />
     </div>
   );
 }
+
