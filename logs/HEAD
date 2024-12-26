@@ -1,0 +1,12 @@
+0000000000000000000000000000000000000000 afda99fd842319b70bfd3b1208c30b6cf4fee577 satwikShresth <satwikshresth@gmail.com> 1734726701 -0500	commit (initial): inital commit
+afda99fd842319b70bfd3b1208c30b6cf4fee577 0000000000000000000000000000000000000000 satwikShresth <satwikshresth@gmail.com> 1734726705 -0500	Branch: renamed refs/heads/main to refs/heads/main
+afda99fd842319b70bfd3b1208c30b6cf4fee577 afda99fd842319b70bfd3b1208c30b6cf4fee577 satwikShresth <satwikshresth@gmail.com> 1734726705 -0500	Branch: renamed refs/heads/main to refs/heads/main
+afda99fd842319b70bfd3b1208c30b6cf4fee577 605b0320d675d8e7019a94d0d4a3c2dfdf33bc16 satwikShresth <satwikshresth@gmail.com> 1734727465 -0500	commit: adding router fixutre
+605b0320d675d8e7019a94d0d4a3c2dfdf33bc16 c47fd21af175d02ba476f86d84a0043be4b96cb5 satwikShresth <satwikshresth@gmail.com> 1734732407 -0500	commit: adding suggestion modal
+c47fd21af175d02ba476f86d84a0043be4b96cb5 cfd5121d072daec1185c9867d84910b089f43374 satwikShresth <satwikshresth@gmail.com> 1734804100 -0500	commit: adding hooks for auto complete
+cfd5121d072daec1185c9867d84910b089f43374 795004a9c6dc2b6ac52445a12b5fd3ae09370825 satwikShresth <satwikshresth@gmail.com> 1734833214 -0500	commit: adding chages before moving to material.ui
+795004a9c6dc2b6ac52445a12b5fd3ae09370825 a46d639b2870928ffe709ca06344fac807f2741d satwikShresth <satwikshresth@gmail.com> 1734906516 -0500	commit: adding endpoint integrations for autocomplele
+a46d639b2870928ffe709ca06344fac807f2741d 50aecb2522aa0370ffe8f099c7807f2395ba22c4 satwikShresth <satwikshresth@gmail.com> 1734990017 -0500	commit: working form
+50aecb2522aa0370ffe8f099c7807f2395ba22c4 9e56aa965bf76dca31d8e6e28af33021d90e3dc3 satwikShresth <satwikshresth@gmail.com> 1734993358 -0500	commit: fixing the table to look beautiful
+9e56aa965bf76dca31d8e6e28af33021d90e3dc3 8929940a63c19f14e60b27fb0539b3573d611a30 satwikShresth <satwikshresth@gmail.com> 1735006455 -0500	commit: adding new schema, fixing the endpoint validation and other stuff
+8929940a63c19f14e60b27fb0539b3573d611a30 fa1131d073a0de507df0a8ee92488868cc440ce7 satwikShresth <satwikshresth@gmail.com> 1735011974 -0500	commit: almost ready for productions
