@@ -1,47 +1,61 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
+	import axios from 'axios';
 
-	// Props using Svelte's export syntax
 	const {
-		options = [],
+		apiEndpoint = '/api/options/countries',
 		values = [],
 		onChange = (vals) => {},
 		onAddOption = (val) => {},
-		label = ''
+		label = '',
+		debounceMs = 300
 	} = $props();
 
 	let isOpen = $state(false);
 	let inputValue = $state('');
 	let filteredOptions = $state([]);
+	let loading = $state(false);
 	let inputRef;
 	let wrapperRef;
+	let debounceTimeout;
 
-	const inputId = `multiselect-${Math.random().toString(36).substr(2, 9)}`;
+	const inputId = `multiselect-${label}-${Math.random().toString(36).substr(2, 9)}`;
 
-	$effect(() => {
-		filteredOptions = options.filter(
-			(option) =>
-				option.toLowerCase().includes(inputValue.toLowerCase()) && !values.includes(option)
-		);
+	const api = axios.create({
+		baseURL: apiEndpoint,
+		timeout: 5000
 	});
 
-	onMount(() => {
-		const handleClickOutside = (event) => {
-			if (wrapperRef && !wrapperRef.contains(event.target)) {
-				isOpen = false;
-			}
-		};
+	async function fetchOptions(query) {
+		if (!query.trim()) {
+			filteredOptions = [];
+			return;
+		}
 
-		document.addEventListener('mousedown', handleClickOutside);
-
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside);
-		};
-	});
+		try {
+			loading = true;
+			const { data } = await api.get('', {
+				params: { q: query }
+			});
+			filteredOptions = Array.isArray(data)
+				? data.filter((option) => !values.includes(option))
+				: [];
+		} catch (error) {
+			console.error('Error fetching options:', error);
+			filteredOptions = [];
+		} finally {
+			loading = false;
+		}
+	}
 
 	function handleInputChange(e) {
 		inputValue = e.target.value;
 		isOpen = true;
+
+		clearTimeout(debounceTimeout);
+		debounceTimeout = setTimeout(() => {
+			fetchOptions(inputValue);
+		}, debounceMs);
 	}
 
 	function handleOptionClick(option) {
@@ -64,9 +78,9 @@
 	}
 
 	function handleAddOption() {
-		if (inputValue && !options.includes(inputValue)) {
-			onAddOption(inputValue);
-			onChange([...values, inputValue]);
+		if (inputValue.trim()) {
+			onAddOption(inputValue.trim());
+			onChange([...values, inputValue.trim()]);
 			inputValue = '';
 		}
 	}
@@ -77,6 +91,23 @@
 			handleAddOption();
 		}
 	}
+
+	onMount(() => {
+		const handleClickOutside = (event) => {
+			if (wrapperRef && !wrapperRef.contains(event.target)) {
+				inputValue = '';
+				isOpen = false;
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	});
+
+	onDestroy(() => {
+		clearTimeout(debounceTimeout);
+	});
 </script>
 
 <div class="relative w-full" bind:this={wrapperRef}>
@@ -117,13 +148,19 @@
 			/>
 		</div>
 	</div>
-	{#if isOpen && (inputValue || filteredOptions.length > 0)}
+	{#if isOpen}
 		<div
 			id="multiselect-options"
 			class="absolute z-10 mt-1 w-full rounded-md border border-transparent bg-white shadow-lg"
 			role="listbox"
 		>
-			{#if filteredOptions.length > 0}
+			{#if loading}
+				<div class="flex justify-center p-2">
+					<div
+						class="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+					></div>
+				</div>
+			{:else if filteredOptions.length > 0}
 				{#each filteredOptions as option}
 					<button
 						type="button"
@@ -136,15 +173,6 @@
 						{option}
 					</button>
 				{/each}
-			{:else if inputValue}
-				<button
-					type="button"
-					onclick={handleAddOption}
-					onkeydown={handleAddOptionKeyDown}
-					class="w-full cursor-pointer px-4 py-2 text-left text-blue-600 hover:bg-gray-100"
-				>
-					Add "{inputValue}"
-				</button>
 			{/if}
 		</div>
 	{/if}

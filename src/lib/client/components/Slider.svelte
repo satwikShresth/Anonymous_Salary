@@ -5,10 +5,6 @@
 	let sliderId = `slider-${Math.random().toString(36).substr(2, 9)}`;
 	let percentage = $derived(((value - min) / (max - min)) * 100);
 
-	$effect(() => {
-		currentValue = value;
-	});
-
 	function handleSliderChange(e) {
 		currentValue = Number(e.target.value);
 		onChange(currentValue);
