@@ -2,25 +2,28 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	// Props using Svelte's export syntax
-	export let options = [];
-	export let values = [];
-	export let onChange = (vals) => {};
-	export let onAddOption = (val) => {};
-	export let label = '';
+	const {
+		options = [],
+		values = [],
+		onChange = (vals) => {},
+		onAddOption = (val) => {},
+		label = ''
+	} = $props();
 
-	// Reactive declarations using Svelte's $ syntax
-	let isOpen = false;
-	let inputValue = '';
+	let isOpen = $state(false);
+	let inputValue = $state('');
+	let filteredOptions = $state([]);
 	let inputRef;
 	let wrapperRef;
-	let filteredOptions = [];
 
 	const inputId = `multiselect-${Math.random().toString(36).substr(2, 9)}`;
 
-	// Reactive statement using $: instead of $effect
-	$: filteredOptions = options.filter(
-		(option) => option.toLowerCase().includes(inputValue.toLowerCase()) && !values.includes(option)
-	);
+	$effect(() => {
+		filteredOptions = options.filter(
+			(option) =>
+				option.toLowerCase().includes(inputValue.toLowerCase()) && !values.includes(option)
+		);
+	});
 
 	onMount(() => {
 		const handleClickOutside = (event) => {
@@ -77,9 +80,9 @@
 </script>
 
 <div class="relative w-full" bind:this={wrapperRef}>
-	<label for={inputId} class="mb-1 block text-sm font-medium text-gray-700">
+	<span for={inputId} class="mb-1 block font-medium text-gray-700">
 		{label}
-	</label>
+	</span>
 	<div
 		class="min-h-[42px] rounded-md border border-gray-300 p-1 focus-within:border-transparent focus-within:ring-2 focus-within:ring-blue-500"
 	>

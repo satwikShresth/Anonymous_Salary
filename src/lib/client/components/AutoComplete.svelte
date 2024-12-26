@@ -99,9 +99,9 @@
 </script>
 
 <div class="relative w-full" bind:this={wrapperRef}>
-	<label for={inputId} class="mb-1 block text-sm font-medium text-gray-700">
+	<span for={inputId} class="mb-2 font-medium text-gray-700">
 		{label}
-	</label>
+	</span>
 	<input
 		id={inputId}
 		bind:this={inputRef}

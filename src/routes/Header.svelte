@@ -46,7 +46,7 @@
 	}
 
 	li[aria-current='page']::before {
-		--size: 6px;
+		--size: 12px;
 		content: '';
 		width: 0;
 		height: 0;
@@ -63,11 +63,12 @@
 		align-items: center;
 		padding: 0 2rem;
 		color: var(--color-text);
-		font-weight: 700;
-		font-size: 0.8rem;
+		font-weight: 900;
+		font-size: 1.5rem;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
 		text-decoration: none;
+		margin-top: 0.4em;
 		transition: color 0.2s linear;
 	}
 

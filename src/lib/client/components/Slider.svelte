@@ -23,10 +23,10 @@
 	}
 </script>
 
-<div class="w-full">
-	<label for={sliderId} class="mb-1 block text-sm font-medium text-gray-700">
+<div class=" gap-4">
+	<span class="mb-1 font-medium text-gray-700">
 		{label}
-	</label>
+	</span>
 	<div class="flex items-center gap-4">
 		<input
 			{min}
@@ -51,4 +51,3 @@
 		/>
 	</div>
 </div>
-

@@ -12,10 +12,10 @@
 	const groupName = `radio-group-${Math.random().toString(36).slice(2)}`;
 </script>
 
-<div class="w-full">
-	<label for="id" class="mb-1 block text-sm font-medium text-gray-700">
+<div class="gap-4">
+	<span class="mb-3 font-medium text-gray-700">
 		{label}
-	</label>
+	</span>
 	<div class="grid grid-cols-2 gap-2">
 		{#each options as option}
 			<label
@@ -36,4 +36,3 @@
 		{/each}
 	</div>
 </div>
-
