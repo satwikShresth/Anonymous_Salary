@@ -8,7 +8,6 @@
 
 <div class="app">
 	<Header />
-
 	<main>
 		{@render children()}
 	</main>

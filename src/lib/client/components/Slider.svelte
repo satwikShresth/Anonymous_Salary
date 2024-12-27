@@ -1,7 +1,10 @@
 <script>
-	const { min = 0, max = 100, value = 0, onChange = (val) => {}, label = '' } = $props();
+	import { onMount } from 'svelte';
+
+	const { min = 0, max = 100, value = 0, onChange = (val) => {}, label = '', unit = '' } = $props();
 
 	let currentValue = $state(value);
+	let focused = $state(false);
 	let sliderId = `slider-${Math.random().toString(36).substr(2, 9)}`;
 	let percentage = $derived(((value - min) / (max - min)) * 100);
 
@@ -17,13 +20,14 @@
 			onChange(newValue);
 		}
 	}
+	$inspect(focused);
 </script>
 
 <div class=" gap-4">
 	<span class="mb-1 font-medium text-gray-700">
 		{label}
 	</span>
-	<div class="flex items-center gap-4">
+	<div class="spave-x-2 flex items-center gap-2">
 		<input
 			{min}
 			{max}
@@ -40,10 +44,13 @@
 			type="number"
 			{min}
 			{max}
+			onfocusin={() => (focused = true)}
+			onfocusout={() => (focused = false)}
 			value={currentValue}
 			oninput={handleInputChange}
-			class="w-20 rounded-md border border-gray-300 px-2 py-1"
+			class=" pl w-[90] rounded-md border-transparent outline-transparent ring-transparent focus:border-transparent focus:outline-transparent focus:ring-transparent"
 			aria-label={`${label} number input`}
 		/>
+		<span class={focused ? '-ml-3' : '-ml-9'}>{unit}</span>
 	</div>
 </div>

@@ -1,7 +1,9 @@
 <script>
 	import FormNavigation from './Navigation.svelte';
 	import FormProgress from './Progress.svelte';
-	import CompanySection from './Company.section.svelte';
+	import CompanySection from './sections/Company.section.svelte';
+	import ProgramSection from './sections/Program.section.svelte';
+	import CompensationSection from './sections/Compensation.section.svelte';
 
 	let formData = $state({
 		companyName: '',
@@ -21,18 +23,21 @@
 		otherNotes: ''
 	});
 
+	const stepTitles = [
+		{ label: 'Company', component: CompanySection },
+		{ label: 'Program', component: ProgramSection },
+		{ label: 'Compensation', component: CompensationSection }
+	];
 	let currentStep = $state(1);
 	const errors = $state({});
-	const totalSteps = 3;
-	const stepTitles = ['Company Information', 'Position Details', 'Offer Details'];
+
+	const totalSteps = stepTitles.length;
 
 	function handleSubmit(event) {
 		event.preventDefault();
-		// Handle form submission
 	}
 
 	function goToStep(step) {
-		// Add validation logic if needed
 		currentStep = step;
 	}
 
@@ -50,19 +55,21 @@
 </script>
 
 <div class="px-4 py-12 sm:px-6 lg:px-8">
-	<h2 class="mb-6 text-2xl font-bold text-gray-900">Profile Setup</h2>
-	<form
-		onsubmit={handleSubmit}
-		class="mx-auto max-w-6xl space-y-8 rounded-xl bg-white p-8 shadow-lg"
-	>
-		<FormProgress {currentStep} {totalSteps} {stepTitles} onStepClick={goToStep} {errors} />
-		{#if currentStep === 1}
-			<CompanySection bind:formData />
-		{:else if currentStep === 2}
-			<div>Step 2 Content</div>
-		{:else if currentStep === 3}
-			<div>Step 3 Content</div>
-		{/if}
+	<form onsubmit={handleSubmit} class="mx-36 max-w-6xl space-y-8 rounded-xl bg-white p-8 shadow-lg">
+		<h2 class="mb-6 text-2xl font-bold text-gray-900">Anonymous Salary Form</h2>
+
+		<FormProgress
+			{currentStep}
+			stepTitles={stepTitles.map((item) => item.label)}
+			onStepClick={goToStep}
+			{errors}
+		/>
+
+		{#each stepTitles as item, idx}
+			{#if idx + 1 == currentStep}
+				<item.component bind:formData />
+			{/if}
+		{/each}
 
 		{#if currentStep < totalSteps}
 			<FormNavigation

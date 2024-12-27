@@ -1,19 +1,20 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
+	import { X } from 'lucide-svelte';
 	import axios from 'axios';
 
 	const {
 		apiEndpoint = '/api/options/countries',
-		values = [],
-		onChange = (vals) => {},
-		onAddOption = (val) => {},
+		onChange = (values) => {}, // Added onChange handler
 		label = '',
 		debounceMs = 300
 	} = $props();
 
 	let isOpen = $state(false);
+	let selectedValues = $state([]);
 	let inputValue = $state('');
-	let filteredOptions = $state([]);
+	let options = $state([]);
+	let filteredOptions = $derived(options.filter((value) => !selectedValues.includes(value)));
 	let loading = $state(false);
 	let inputRef;
 	let wrapperRef;
@@ -28,7 +29,7 @@
 
 	async function fetchOptions(query) {
 		if (!query.trim()) {
-			filteredOptions = [];
+			options = [];
 			return;
 		}
 
@@ -37,12 +38,12 @@
 			const { data } = await api.get('', {
 				params: { q: query }
 			});
-			filteredOptions = Array.isArray(data)
-				? data.filter((option) => !values.includes(option))
+			options = Array.isArray(data)
+				? data.filter((option) => !selectedValues.includes(option))
 				: [];
 		} catch (error) {
 			console.error('Error fetching options:', error);
-			filteredOptions = [];
+			options = [];
 		} finally {
 			loading = false;
 		}
@@ -59,8 +60,8 @@
 	}
 
 	function handleOptionClick(option) {
-		onChange([...values, option]);
-		inputValue = '';
+		selectedValues.push(option);
+		onChange(selectedValues);
 		if (inputRef) {
 			inputRef.focus();
 		}
@@ -74,22 +75,8 @@
 	}
 
 	function handleRemoveValue(valueToRemove) {
-		onChange(values.filter((value) => value !== valueToRemove));
-	}
-
-	function handleAddOption() {
-		if (inputValue.trim()) {
-			onAddOption(inputValue.trim());
-			onChange([...values, inputValue.trim()]);
-			inputValue = '';
-		}
-	}
-
-	function handleAddOptionKeyDown(e) {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			handleAddOption();
-		}
+		selectedValues = selectedValues.filter((value) => value !== valueToRemove);
+		onChange(selectedValues);
 	}
 
 	onMount(() => {
@@ -118,7 +105,7 @@
 		class="min-h-[42px] rounded-md border border-gray-300 p-1 focus-within:border-transparent focus-within:ring-2 focus-within:ring-blue-500"
 	>
 		<div class="flex flex-wrap gap-1">
-			{#each values as value}
+			{#each selectedValues as value}
 				<span
 					class="inline-flex items-center rounded-md border-transparent bg-blue-100 px-2 py-1 text-sm text-blue-800"
 				>
@@ -129,7 +116,7 @@
 						class="ml-1 text-blue-600 hover:text-blue-800"
 						aria-label={`Remove ${value}`}
 					>
-						×
+						<X />
 					</button>
 				</span>
 			{/each}
@@ -177,4 +164,3 @@
 		</div>
 	{/if}
 </div>
-

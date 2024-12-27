@@ -1,11 +1,11 @@
-<script lang="ts">
+<script>
 	import { Check } from 'lucide-svelte';
-	const { currentStep, totalSteps, onStepClick, stepTitles, errors } = $props();
+	const { currentStep, onStepClick, stepTitles, errors } = $props();
 
 	const hasErrors = $derived(Object.keys(errors).length > 0);
-	const progressWidth = $derived(`${((currentStep - 1) / (totalSteps - 1)) * 100}%`);
+	const progressWidth = $derived(`${((currentStep - 1) / (stepTitles.length - 1)) * 100}%`);
 
-	function getStepClasses(stepNumber: number) {
+	function getStepClasses(stepNumber) {
 		const isComplete = currentStep > stepNumber;
 		const isCurrent = currentStep === stepNumber;
 		const hasError = hasErrors && isCurrent;
@@ -25,11 +25,11 @@
     `;
 	}
 
-	function getTitleClasses(stepNumber: number) {
+	function getTitleClasses(stepNumber) {
 		const isCurrent = currentStep === stepNumber;
 		const hasError = hasErrors && isCurrent;
 
-		return `text-xs mt-1 ${
+		return `text-sm mt-1 ${
 			isCurrent
 				? hasError
 					? 'text-red-600 font-medium'
@@ -39,9 +39,9 @@
 	}
 </script>
 
-<div class="mb-8">
+<div class="mb-8 w-11/12 px-10 pl-24">
 	<div class="mb-2 flex justify-between">
-		{#each Array(totalSteps) as _, index}
+		{#each stepTitles as _, index}
 			{@const stepNumber = index + 1}
 			{@const isComplete = currentStep > stepNumber}
 			<button
@@ -63,7 +63,7 @@
 		{/each}
 	</div>
 	<div class="relative mt-4">
-		<div class="absolute left-0 top-0 h-1 w-full rounded bg-gray-200">
+		<div class="absolute left-0 top-0 h-2 w-full rounded bg-gray-200">
 			<div
 				class="absolute left-0 top-0 h-full rounded bg-blue-600 transition-all duration-300"
 				style="width: {progressWidth}"

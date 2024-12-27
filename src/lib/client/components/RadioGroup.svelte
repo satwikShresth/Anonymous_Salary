@@ -38,7 +38,7 @@
 	});
 </script>
 
-<div class="gap-4">
+<div>
 	<span class="mb-3 font-medium text-gray-700">
 		{label}
 	</span>
@@ -77,4 +77,3 @@
 		{/if}
 	</div>
 </div>
-

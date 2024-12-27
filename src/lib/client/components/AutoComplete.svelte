@@ -12,13 +12,13 @@
 
 	let isOpen = $state(false);
 	let inputValue = $state(value);
-	let selectedValue = $state('');
+	let seletedValue = $state(value);
 	let filteredOptions = $state([]);
 	let loading = $state(false);
 	let hasFetched = $state(false);
 	let wrapperRef;
 	let inputRef;
-	const inputId = `autocomplete-${label}-${Math.random().toString(36).substr(2, 9)}`;
+	let inputId = `autocomplete-${Math.random().toString(36).substr(2, 9)}`;
 	let debounceTimeout;
 
 	const api = axios.create({
@@ -60,9 +60,8 @@
 	}
 
 	function handleOptionClick(option) {
-		selectedValue = option;
-		inputValue = selectedValue;
-
+		inputValue = option;
+		seletedValue = option;
 		onChange(option);
 		isOpen = false;
 	}
@@ -86,12 +85,11 @@
 			handleAddOption();
 		}
 	}
-	$inspect(inputValue);
 
 	onMount(() => {
 		const handleClickOutside = (event) => {
 			if (wrapperRef && !wrapperRef.contains(event.target)) {
-				inputValue = selectedValue;
+				inputValue = seletedValue;
 				isOpen = false;
 			}
 		};
@@ -118,7 +116,7 @@
 		value={inputValue}
 		oninput={handleInputChange}
 		onfocus={() => (isOpen = true)}
-		class="w-full rounded-md border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500"
+		class="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
 		role="combobox"
 		aria-expanded={isOpen}
 		aria-controls="autocomplete-options"
