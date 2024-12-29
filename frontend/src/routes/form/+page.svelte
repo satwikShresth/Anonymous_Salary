@@ -30,12 +30,12 @@
 		minors: [],
 		location: '',
 		workHours: 0,
-		coopYear: '',
-		coopCycle: '',
+		coopYear: '1st',
+		coopCycle: 'Fall/Winter',
 		compensations: [],
-		level: '',
-		source: '',
-		offerStatus: '',
+		level: 'Undergraduate',
+		source: 'SCDC',
+		offerStatus: 'Offered',
 		otherNotes: ''
 	});
 

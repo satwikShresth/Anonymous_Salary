@@ -36,15 +36,16 @@
 		<AutoComplete
 			value={formData.company}
 			label="Company"
-			apiEndpoint="/api/options/company"
+			apiEndpoint="/api/v1/options/company"
 			onChange={(company) => onChange({ company })}
 		/>
 	</div>
 	<div class="flex-1">
 		<AutoComplete
 			value={formData.position}
+			bind:queryDep={formData.company}
 			label="Position"
-			apiEndpoint="/api/options/position"
+			apiEndpoint="/api/v1/options/position"
 			onChange={(position) => onChange({ position })}
 		/>
 	</div>
@@ -55,7 +56,7 @@
 		<AutoComplete
 			value={formData.location}
 			label="Location"
-			apiEndpoint="/api/options/location"
+			apiEndpoint="/api/v1/options/location"
 			onChange={(location) => onChange({ location })}
 		/>
 	</div>
@@ -63,7 +64,7 @@
 		<RadioGroup
 			label="Source"
 			value={formData.source}
-			apiEndpoint="/api/options/source"
+			apiEndpoint="/api/v1/options/source"
 			options={['hello', 'bellow']}
 			onChange={(source) => onChange({ source })}
 		/>

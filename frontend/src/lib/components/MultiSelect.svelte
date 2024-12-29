@@ -5,6 +5,7 @@
 
 	const {
 		apiEndpoint = '/api/options/countries',
+		queryDep = $bindable(''),
 		onChange = (values) => {},
 		label = '',
 		values = [],
@@ -34,14 +35,15 @@
 
 		try {
 			loading = true;
-			const { data } = await api.get('', {
-				params: { q: query }
-			});
+			const params = { q: query, c: queryDep };
+			const { data } = await api.get('', { params });
+
 			options = Array.isArray(data)
 				? data.filter((option) => !selectedValues.includes(option))
 				: [];
 		} catch (error) {
-			console.error('Error fetching options:', error);
+			console.error('Error fetching options: ', error);
+			error = 'Error fetching options: ' + error;
 			options = [];
 		} finally {
 			loading = false;

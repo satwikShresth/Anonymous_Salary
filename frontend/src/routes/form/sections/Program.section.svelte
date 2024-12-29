@@ -35,7 +35,7 @@
 		<RadioGroup
 			label="Level"
 			value={formData.level}
-			apiEndpoint="/api/options/source"
+			apiEndpoint="/api/v1/options/program"
 			onChange={(level) => onChange({ level })}
 		/>
 	</div>
@@ -45,6 +45,8 @@
 	<div class="flex-1">
 		<MultiSelect
 			label="Majors"
+			bind:queryDep={formData.level}
+			apiEndpoint="/api/v1/options/majors"
 			values={formData.majors}
 			onChange={(majors) => onChange({ majors })}
 		/>
@@ -52,6 +54,8 @@
 	<div class="flex-1">
 		<MultiSelect
 			label="Minors"
+			bind:queryDep={formData.level}
+			apiEndpoint="/api/v1/options/minors"
 			values={formData.minors}
 			onChange={(minors) => onChange({ minors })}
 		/>
@@ -63,7 +67,7 @@
 		<RadioGroup
 			value={formData.coopCycle}
 			label="Coop Cycle"
-			apiEndpoint="/api/options/source"
+			apiEndpoint="/api/v1/options/coop/cycle"
 			onChange={(coopCycle) => onChange({ coopCycle })}
 		/>
 	</div>
@@ -71,7 +75,7 @@
 		<RadioGroup
 			label="Coop Year"
 			value={formData.coopYear}
-			apiEndpoint="/api/options/source"
+			apiEndpoint="/api/v1/options/coop/years"
 			onChange={(coopYear) => onChange({ coopYear })}
 		/>
 	</div>

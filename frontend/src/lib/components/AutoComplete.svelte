@@ -4,6 +4,7 @@
 
 	const {
 		apiEndpoint = '/api/options/countries',
+		queryDep = $bindable(''),
 		value = '',
 		onChange = (val) => {},
 		label = '',
@@ -34,9 +35,9 @@
 		try {
 			loading = true;
 			hasFetched = false;
-			const { data } = await api.get('', {
-				params: { q: query }
-			});
+			const params = { q: query, c: queryDep };
+			const { data } = await api.get('', { params });
+
 			filteredOptions = Array.isArray(data) ? data : [];
 		} catch (error) {
 			console.error('Error fetching options:', error);
@@ -87,7 +88,7 @@
 		onfocusout={() => {
 			if (!isOptionClickPending) {
 				inputValue = lastSetValue;
-				onChange('');
+				onChange(lastSetValue);
 				isOpen = false;
 			}
 		}}

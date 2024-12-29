@@ -59,22 +59,22 @@
 				<label
 					class=" flex cursor-pointer items-center justify-center rounded-lg px-5 py-3 text-base
             transition-colors duration-200 ease-in-out
-            {selectedValue === option.value
+            {selectedValue === option
 						? 'bg-blue-600 font-medium text-white shadow-md'
 						: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 				>
 					<input
 						type="radio"
-						id={`radio-${option.value}-${idx}`}
+						id={`radio-${option}-${idx}`}
 						class="hidden"
-						checked={selectedValue === option.value}
+						checked={selectedValue === option}
 						onchange={() => {
-							selectedValue = option.value;
-							onChange(option.value);
+							selectedValue = option;
+							onChange(option);
 						}}
 						{...props}
 					/>
-					<span>{option.label}</span>
+					<span>{option}</span>
 				</label>
 			{/each}
 		{:else}

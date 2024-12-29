@@ -15,7 +15,7 @@
 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 	<RadioGroup
 		label="Offer Status"
-		apiEndpoint="/api/options/tiers"
+		apiEndpoint="/api/v1/options/offer"
 		onchange={(value) => onChange({ offerStatus: value })}
 		type="status"
 	/>

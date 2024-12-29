@@ -28,9 +28,6 @@ services:
         - path: ./backend/database/
           target: /app/database
           action: sync+restart
-        - path: ./backend/config/
-          target: /app/config
-          action: sync+restart
         - path: ./backend/deno.json
           target: /app/deno.json
           action: sync+restart
@@ -38,12 +35,9 @@ services:
           action: rebuild
         - path: ./backend/dockerfile
           action: rebuild
-        - path: ./docker-compose.yml
-          action: rebuild
     depends_on:
       db:
         condition: service_healthy
-    entrypoint: ["/app/entrypoint.sh"]
     ports:
       - "3000:3000"
 
