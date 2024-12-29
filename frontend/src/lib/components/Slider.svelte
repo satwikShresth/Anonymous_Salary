@@ -1,7 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 
-	const { min = 0, max = 100, value = 0, onChange = (val) => {}, label = '', unit = '' } = $props();
+	const {
+		min = 0,
+		max = 100,
+		value = 0,
+		onChange = (val) => {},
+		label = '',
+		unit = '',
+		icon = null
+	} = $props();
 
 	let currentValue = $state(value);
 	let focused = $state(false);
@@ -24,7 +32,12 @@
 </script>
 
 <div class=" gap-4">
-	<span class="mb-1 font-medium text-gray-700">
+	<span class="block flex gap-2 font-medium font-semibold text-gray-700">
+		{#if icon}
+			<div class="pl-2 text-blue-600">
+				{@render icon('')}
+			</div>
+		{/if}
 		{label}
 	</span>
 	<div class="spave-x-2 flex items-center gap-2">
@@ -54,4 +67,3 @@
 		<span class={focused ? '-ml-1' : '-ml-5'}>{unit}</span>
 	</div>
 </div>
-

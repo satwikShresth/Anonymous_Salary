@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 import { schema } from 'db/schema';
 import { db } from 'db';
 import { and, eq, ilike, or } from 'drizzle-orm';
+import { type programLevel } from '../validation/mod.ts';
 
 export default () => {
    const router = Router();
@@ -31,7 +32,7 @@ export default () => {
 
    // Get majors
    router.get('/majors', async (req: Request, res: Response) => {
-      const level = req.query.c as string;
+      const level = req.query.c as programLevel;
       const query = req.query.q as string;
       const major = schema.major;
 

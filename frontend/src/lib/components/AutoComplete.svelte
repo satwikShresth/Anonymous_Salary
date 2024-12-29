@@ -8,9 +8,9 @@
 		value = '',
 		onChange = (val) => {},
 		label = '',
+		icon = null,
 		debounceMs = 300
 	} = $props();
-
 	let isOpen = $state(false);
 	let inputValue = $state(value);
 	let lastSetValue = $state(value);
@@ -77,7 +77,15 @@
 </script>
 
 <div class="relative w-full">
-	<label for="autocomplete" class="mb-2 font-medium text-gray-700">
+	<label
+		for="autocomplete"
+		class="mb-2 flex items-center gap-2 font-medium font-semibold text-gray-700"
+	>
+		{#if icon}
+			<div class="pl-2 text-blue-600">
+				{@render icon('')}
+			</div>
+		{/if}
 		{label}
 	</label>
 	<input

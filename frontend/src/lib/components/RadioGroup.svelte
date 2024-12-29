@@ -7,6 +7,7 @@
 		value = '',
 		onChange = (val) => {},
 		label = '',
+		icon = null,
 		...props
 	} = $props();
 
@@ -40,7 +41,12 @@
 </script>
 
 <div class="w-auto">
-	<span class="font-medium text-gray-700">
+	<span class="block flex gap-2 font-medium font-semibold text-gray-700">
+		{#if icon}
+			<div class="pl-2 text-blue-600">
+				{@render icon('')}
+			</div>
+		{/if}
 		{label}
 	</span>
 	<div class="grid grid-cols-2 gap-2 py-1">

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
-	import { GraduationCap } from 'lucide-svelte';
+	import { BookCopy, Bookmark, Calendar, GraduationCap, SunSnow } from 'lucide-svelte';
 
 	let {
 		formData = {},
@@ -30,10 +30,11 @@
 	};
 </script>
 
-<div class="flex justify-between gap-6">
+<div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<RadioGroup
 			label="Level"
+			icon={GraduationCap}
 			value={formData.level}
 			apiEndpoint="/api/v1/options/program"
 			onChange={(level) => onChange({ level })}
@@ -41,10 +42,11 @@
 	</div>
 </div>
 
-<div class="flex justify-between gap-6">
+<div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<MultiSelect
 			label="Majors"
+			icon={Bookmark}
 			bind:queryDep={formData.level}
 			apiEndpoint="/api/v1/options/majors"
 			values={formData.majors}
@@ -54,6 +56,7 @@
 	<div class="flex-1">
 		<MultiSelect
 			label="Minors"
+			icon={BookCopy}
 			bind:queryDep={formData.level}
 			apiEndpoint="/api/v1/options/minors"
 			values={formData.minors}
@@ -62,18 +65,21 @@
 	</div>
 </div>
 
-<div class="flex justify-between gap-6">
+<div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<RadioGroup
 			value={formData.coopCycle}
+			icon={SunSnow}
 			label="Coop Cycle"
 			apiEndpoint="/api/v1/options/coop/cycle"
 			onChange={(coopCycle) => onChange({ coopCycle })}
 		/>
 	</div>
+
 	<div class="flex-1">
 		<RadioGroup
 			label="Coop Year"
+			icon={Calendar}
 			value={formData.coopYear}
 			apiEndpoint="/api/v1/options/coop/years"
 			onChange={(coopYear) => onChange({ coopYear })}

@@ -86,7 +86,6 @@
 				errors = [];
 				return;
 			}
-			console.log(result);
 			errors = result.errors;
 		}
 	}
@@ -108,7 +107,6 @@
 	function handleSingleUpdate(name, value) {
 		if (name in formData) {
 			if (Array.isArray(formData[name])) {
-				console.log('handling form1');
 				const arrayValue = Array.isArray(value)
 					? value
 					: value.split(',').map((item) => item.trim());

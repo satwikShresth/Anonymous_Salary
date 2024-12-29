@@ -9,6 +9,8 @@
 		onChange = (values) => {},
 		label = '',
 		values = [],
+		max = 5,
+		icon = null,
 		debounceMs = 300,
 		...props
 	} = $props();
@@ -83,7 +85,12 @@
 </script>
 
 <div class="relative w-full">
-	<span class="mb-1 block font-medium text-gray-700">
+	<span class="mb-1 block flex gap-2 font-medium font-semibold text-gray-700">
+		{#if icon}
+			<div class="pl-2 text-blue-600">
+				{@render icon('')}
+			</div>
+		{/if}
 		{label}
 	</span>
 	<div class="py-1">
@@ -105,57 +112,60 @@
 			</div>
 		{/each}
 	</div>
-	<div
-		class="min-h-[42px] rounded-md border border-gray-300 p-1 focus-within:border-transparent focus-within:ring-2 focus-within:ring-blue-500"
-	>
-		<div class="flex flex-wrap gap-1">
-			<input
-				type="text"
-				bind:value={inputValue}
-				oninput={handleInputChange}
-				onfocusin={() => (isOpen = true)}
-				onfocusout={() => (isOpen = false)}
-				class="min-w-[120px] flex-1 border-transparent p-1 outline-none"
-				placeholder="Type to search..."
-				aria-expanded={isOpen}
-				aria-controls="multiselect-options"
-				role="combobox"
-				{...props}
-			/>
-		</div>
-	</div>
-	{#if isOpen || isOptionClickPending}
+
+	{#if values.length < 5}
 		<div
-			id="multiselect-options"
-			class="absolute z-10 mt-1 w-full rounded-md border border-transparent bg-white shadow-lg"
-			role="listbox"
+			class="min-h-[42px] rounded-md border border-gray-300 p-1 focus-within:border-transparent focus-within:ring-2 focus-within:ring-blue-500"
 		>
-			{#if loading}
-				<div class="flex justify-center p-2">
-					<div
-						class="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
-					></div>
-				</div>
-			{:else if filteredOptions.length > 0}
-				{#each filteredOptions as option}
-					<button
-						type="button"
-						onclick={() => handleOptionClick(option)}
-						onkeydown={(e) => handleOptionKeyDown(e, option)}
-						onmouseenter={() => {
-							isOptionClickPending = true;
-						}}
-						onmouseleave={() => {
-							isOptionClickPending = false;
-						}}
-						class="w-full cursor-pointer px-4 py-2 text-left hover:bg-gray-100"
-						role="option"
-						aria-selected="false"
-					>
-						{option}
-					</button>
-				{/each}
-			{/if}
+			<div class="flex flex-wrap gap-1">
+				<input
+					type="text"
+					bind:value={inputValue}
+					oninput={handleInputChange}
+					onfocusin={() => (isOpen = true)}
+					onfocusout={() => (isOpen = false)}
+					class="min-w-[120px] flex-1 border-transparent p-1 outline-none"
+					placeholder="Type to search..."
+					aria-expanded={isOpen}
+					aria-controls="multiselect-options"
+					role="combobox"
+					{...props}
+				/>
+			</div>
 		</div>
+		{#if isOpen || isOptionClickPending}
+			<div
+				id="multiselect-options"
+				class="absolute z-10 mt-1 w-full rounded-md border border-transparent bg-white shadow-lg"
+				role="listbox"
+			>
+				{#if loading}
+					<div class="flex justify-center p-2">
+						<div
+							class="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+						></div>
+					</div>
+				{:else if filteredOptions.length > 0}
+					{#each filteredOptions as option}
+						<button
+							type="button"
+							onclick={() => handleOptionClick(option)}
+							onkeydown={(e) => handleOptionKeyDown(e, option)}
+							onmouseenter={() => {
+								isOptionClickPending = true;
+							}}
+							onmouseleave={() => {
+								isOptionClickPending = false;
+							}}
+							class="w-full cursor-pointer px-4 py-2 text-left hover:bg-gray-100"
+							role="option"
+							aria-selected="false"
+						>
+							{option}
+						</button>
+					{/each}
+				{/if}
+			</div>
+		{/if}
 	{/if}
 </div>

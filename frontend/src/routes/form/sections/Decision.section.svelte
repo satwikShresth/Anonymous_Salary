@@ -1,11 +1,10 @@
 <script>
-	import { CheckCircle2, FileText } from 'lucide-svelte';
+	import { BadgeDollarSign, CheckCircle2, FileText } from 'lucide-svelte';
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
 
 	let {
 		formData = {},
 		validate = $bindable(),
-
 		onChange = ({ offerStatus, decision, decisionReason, otherNotes } = {}) => {}
 	} = $props();
 
@@ -15,9 +14,10 @@
 <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 	<RadioGroup
 		label="Offer Status"
+		value={formData.offerStatus}
+		icon={BadgeDollarSign}
 		apiEndpoint="/api/v1/options/offer"
-		onchange={(value) => onChange({ offerStatus: value })}
-		type="status"
+		onChange={(offerStatus) => onChange({ offerStatus })}
 	/>
 
 	<div class="space-y-2 lg:col-span-2">

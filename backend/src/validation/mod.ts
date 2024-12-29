@@ -115,4 +115,5 @@ export const JobDataSchema = z.object({
    }
 });
 
+export type programLevel = z.infer<typeof programLevelTypeEnum>;
 export type JobData = z.infer<typeof JobDataSchema>;
