@@ -1,6 +1,6 @@
 <script>
-	import { page } from "$app/stores";
-	import github from "$lib/images/github.svg";
+	import { page } from '$app/stores';
+	import github from '$lib/images/github.svg';
 </script>
 
 <header>
@@ -9,12 +9,10 @@
 			<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 		</svg>
 		<ul>
-			<li
-				aria-current={$page.url.pathname === "/table" ? "page" : undefined}
-			>
+			<li aria-current={$page.url.pathname === '/table' ? 'page' : undefined}>
 				<a href="/table">Table</a>
 			</li>
-			<li aria-current={$page.url.pathname === "/form" ? "page" : undefined}>
+			<li aria-current={$page.url.pathname === '/form' ? 'page' : undefined}>
 				<a href="/form">Form</a>
 			</li>
 		</ul>
@@ -63,9 +61,9 @@
 		height: 100%;
 	}
 
-	li[aria-current="page"]::before {
+	li[aria-current='page']::before {
 		--size: 12px;
-		content: "";
+		content: '';
 		width: 0;
 		height: 0;
 		position: absolute;
