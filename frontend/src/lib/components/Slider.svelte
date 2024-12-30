@@ -1,15 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 
-	const {
-		min = 0,
-		max = 100,
-		value = 0,
-		onChange = (val) => {},
-		label = '',
-		unit = '',
-		icon = null
-	} = $props();
+	let { min = 0, max = 100, value = $bindable(0), label = '', unit = '', icon = null } = $props();
 
 	let currentValue = $state(value);
 	let focused = $state(false);
@@ -18,14 +10,14 @@
 
 	function handleSliderChange(e) {
 		currentValue = Number(e.target.value);
-		onChange(currentValue);
+		value = currentValue;
 	}
 
 	function handleInputChange(e) {
 		const newValue = Number(e.target.value);
 		if (newValue >= min && newValue <= max) {
 			currentValue = newValue;
-			onChange(newValue);
+			value = currentValue;
 		}
 	}
 	$inspect(focused);

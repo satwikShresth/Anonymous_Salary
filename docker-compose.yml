@@ -21,7 +21,7 @@ services:
     environment:
       - ENV=development
     develop:
-      watch: 
+      watch:
         - path: ./backend/src
           target: /app/src
           action: sync
@@ -48,6 +48,6 @@ services:
     container_name: drizzle-studio
     env_file:
       - .env
-    command: ["npx", "drizzle-kit","studio", "--host=0.0.0.0"]
+    command: ["npx", "drizzle-kit", "studio", "--host=0.0.0.0"]
     ports:
       - "4983:4983"

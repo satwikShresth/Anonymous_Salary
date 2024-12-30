@@ -6,11 +6,7 @@
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
 
-	let {
-		formData,
-		validate = $bindable(),
-		onChange = ({ company, position, location, source, workHours }) => {}
-	} = $props();
+	let { formData = $bindable(), validValues, validate = $bindable() } = $props();
 
 	validate = ({ company, position, location, source, workHours }) => {
 		const validations = {
@@ -34,21 +30,19 @@
 <div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<AutoComplete
-			value={formData.company}
+			bind:value={formData.company}
 			icon={Building2}
 			label="Company"
 			apiEndpoint="/api/v1/options/company"
-			onChange={(company) => onChange({ company })}
 		/>
 	</div>
 	<div class="flex-1">
 		<AutoComplete
-			value={formData.position}
+			bind:value={formData.position}
 			icon={Briefcase}
 			bind:queryDep={formData.company}
 			label="Position"
 			apiEndpoint="/api/v1/options/position"
-			onChange={(position) => onChange({ position })}
 		/>
 	</div>
 </div>
@@ -56,20 +50,18 @@
 <div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<AutoComplete
-			value={formData.location}
+			bind:value={formData.location}
 			label="Location"
 			icon={MapPin}
 			apiEndpoint="/api/v1/options/location"
-			onChange={(location) => onChange({ location })}
 		/>
 	</div>
 	<div class="flex-1">
 		<RadioGroup
 			label="Source"
 			icon={University}
-			value={formData.source}
+			bind:value={formData.source}
 			apiEndpoint="/api/v1/options/source"
-			onChange={(source) => onChange({ source })}
 		/>
 	</div>
 </div>
@@ -77,11 +69,10 @@
 <div class="mx-24 w-auto py-3">
 	<Slider
 		label="Work Hours"
-		value={formData.workHours}
+		bind:value={formData.workHours}
 		min={20}
 		max={80}
 		icon={Clock5}
 		unit="hrs/week"
-		onChange={(workHours) => onChange({ workHours })}
 	/>
 </div>

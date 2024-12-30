@@ -2,16 +2,14 @@
 	import axios from 'axios';
 	import { onMount } from 'svelte';
 
-	const {
+	let {
 		apiEndpoint = '/api/options/tiers',
-		value = '',
-		onChange = (val) => {},
+		value = $bindable(''),
 		label = '',
 		icon = null,
 		...props
 	} = $props();
 
-	let selectedValue = $state(value);
 	let options = $state([]);
 	let loading = $state(true);
 	let error = $state(null);
@@ -65,18 +63,18 @@
 				<label
 					class=" flex cursor-pointer items-center justify-center rounded-lg px-5 py-3 text-base
             transition-colors duration-200 ease-in-out
-            {selectedValue === option
+            {value === option
 						? 'bg-blue-600 font-medium text-white shadow-md'
 						: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
 				>
 					<input
 						type="radio"
+						bind:value
 						id={`radio-${option}-${idx}`}
 						class="hidden"
-						checked={selectedValue === option}
+						checked={value === option}
 						onchange={() => {
-							selectedValue = option;
-							onChange(option);
+							value = option;
 						}}
 						{...props}
 					/>

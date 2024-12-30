@@ -7,6 +7,7 @@
 	let {
 		formData = {},
 		validate = $bindable(),
+		validValues = $bindable(),
 		onChange = ({ level, majors, minors, coopCycle, coopYear }) => {}
 	} = $props();
 	let error = $state(null);

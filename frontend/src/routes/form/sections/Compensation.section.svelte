@@ -3,15 +3,13 @@
 	import Slider from '$lib/components/Slider.svelte';
 
 	let {
-		formData = {},
+		formData = $bindable(),
 		validate = $bindable(),
-		onChange = (value) => {},
+		validValues,
 		showErrors = false
 	} = $props();
 
 	const MAX_ADDITIONAL_COMPENSATION = 5;
-
-	let compensations = $state(formData.compensations);
 
 	const compensationTypes = [
 		{ value: 'Hourly', label: 'Hourly' },
@@ -70,8 +68,8 @@
 	};
 
 	function handleAddCompensation() {
-		if (compensations.length < MAX_ADDITIONAL_COMPENSATION) {
-			compensations.push({
+		if (formData.compensations.length < MAX_ADDITIONAL_COMPENSATION) {
+			formData.compensations.push({
 				type: 'Stipend',
 				amount: null,
 				description: '',
@@ -81,11 +79,11 @@
 	}
 
 	function handleUpdateCompensation(index, item) {
-		compensations[index] = item;
+		formData.compensations[index] = item;
 	}
 
 	function handleRemoveCompensation(index) {
-		compensations = compensations.filter((_, i) => i !== index);
+		formData.compensations = formData.compensations.filter((_, i) => i !== index);
 	}
 
 	function handleTypeChange(item, newType) {
@@ -161,8 +159,7 @@
 
 				{#if !item.isNotApplicable}
 					<Slider
-						value={item.amount || compensationRanges[item.type].min}
-						onChange={(value) => handleUpdateCompensation(index, { ...item, amount: value })}
+						bind:value={formData.compensations[index].amount}
 						min={compensationRanges[item.type].min}
 						max={compensationRanges[item.type].max}
 						step={compensationRanges[item.type].step}
@@ -190,13 +187,13 @@
 	</div>
 {/snippet}
 
-{#each compensations as item, index (index)}
+{#each formData.compensations as item, index (index)}
 	{#key index}
 		{@render compensationItemContent(item, index)}
 	{/key}
 {/each}
 
-{#if compensations.length < MAX_ADDITIONAL_COMPENSATION}
+{#if formData.compensations.length < MAX_ADDITIONAL_COMPENSATION}
 	<button
 		type="button"
 		onclick={handleAddCompensation}

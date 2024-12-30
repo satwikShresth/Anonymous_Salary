@@ -3,12 +3,11 @@
 	import { X } from 'lucide-svelte';
 	import axios from 'axios';
 
-	const {
+	let {
 		apiEndpoint = '/api/options/countries',
 		queryDep = $bindable(''),
-		onChange = (values) => {},
+		values = $bindable(['']),
 		label = '',
-		values = [],
 		max = 5,
 		icon = null,
 		debounceMs = 300,
@@ -17,10 +16,9 @@
 
 	let isOpen = $state(false);
 	let isOptionClickPending = $state(false);
-	let selectedValues = $state(values);
 	let inputValue = $state('');
 	let options = $state([]);
-	let filteredOptions = $derived(options.filter((value) => !selectedValues.includes(value)));
+	let filteredOptions = $derived(options.filter((value) => !values.includes(value)));
 	let loading = $state(false);
 	let debounceTimeout;
 
@@ -40,9 +38,7 @@
 			const params = { q: query, c: queryDep };
 			const { data } = await api.get('', { params });
 
-			options = Array.isArray(data)
-				? data.filter((option) => !selectedValues.includes(option))
-				: [];
+			options = Array.isArray(data) ? data.filter((option) => !values.includes(option)) : [];
 		} catch (error) {
 			console.error('Error fetching options: ', error);
 			error = 'Error fetching options: ' + error;
@@ -63,8 +59,7 @@
 	}
 
 	function handleOptionClick(option) {
-		selectedValues.push(option);
-		onChange(selectedValues);
+		values.push(option);
 	}
 
 	function handleOptionKeyDown(e, option) {
@@ -75,8 +70,7 @@
 	}
 
 	function handleRemoveValue(valueToRemove) {
-		selectedValues = selectedValues.filter((value) => value !== valueToRemove);
-		onChange(selectedValues);
+		values = values.filter((value) => value !== valueToRemove);
 	}
 
 	onDestroy(() => {
@@ -94,7 +88,7 @@
 		{label}
 	</span>
 	<div class="py-1">
-		{#each selectedValues as value}
+		{#each values as value}
 			<div class="flex inline-flex px-1 py-1">
 				<span
 					class="inline-flex items-center rounded-md border-transparent bg-blue-100 px-2 py-1 text-sm text-blue-800"

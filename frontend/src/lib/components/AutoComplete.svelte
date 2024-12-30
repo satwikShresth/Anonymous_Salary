@@ -2,23 +2,23 @@
 	import { onDestroy } from 'svelte';
 	import axios from 'axios';
 
-	const {
+	let {
 		apiEndpoint = '/api/options/countries',
 		queryDep = $bindable(''),
-		value = '',
-		onChange = (val) => {},
+		value = $bindable(''),
 		label = '',
 		icon = null,
-		debounceMs = 300
+		debounceMs = 500
 	} = $props();
+
 	let isOpen = $state(false);
 	let inputValue = $state(value);
-	let lastSetValue = $state(value);
 	let filteredOptions = $state([]);
 	let loading = $state(false);
 	let hasFetched = $state(false);
 	let isOptionClickPending = $state(false);
-	let debounceTimeout;
+
+	let debounceTimeout = null;
 
 	const api = axios.create({
 		baseURL: apiEndpoint,
@@ -49,17 +49,24 @@
 	}
 
 	function handleInputChange(e) {
-		inputValue = e.target.value;
-		clearTimeout(debounceTimeout);
-		debounceTimeout = setTimeout(() => {
-			fetchOptions(inputValue);
-		}, debounceMs);
+		const trimmedInput = e.target.value.trim();
+		if (trimmedInput === inputValue) return; // Skip fetch if value hasn't changed
+
+		inputValue = trimmedInput;
+
+		// Clear the previous timeout
+		if (debounceTimeout) clearTimeout(debounceTimeout);
+
+		// Set a new timeout
+		if (trimmedInput.length > 2)
+			debounceTimeout = setTimeout(() => {
+				fetchOptions(inputValue);
+			}, debounceMs);
 	}
 
 	function handleOptionClick(option) {
 		inputValue = option;
-		lastSetValue = inputValue;
-		onChange(option);
+		value = inputValue;
 		isOptionClickPending = false;
 		isOpen = false;
 	}
@@ -95,8 +102,7 @@
 		onfocusin={() => (isOpen = true)}
 		onfocusout={() => {
 			if (!isOptionClickPending) {
-				inputValue = lastSetValue;
-				onChange(lastSetValue);
+				inputValue = value;
 				isOpen = false;
 			}
 		}}

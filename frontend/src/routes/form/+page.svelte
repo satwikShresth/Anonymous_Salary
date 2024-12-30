@@ -7,8 +7,10 @@
 	import CompensationSection from './sections/Compensation.section.svelte';
 	import Notification from '$lib/components/Notification.svelte';
 	import { Building2, DollarSign, CheckCircle2, GraduationCap } from 'lucide-svelte';
-	import { getContext } from 'svelte';
+	import { FormData } from './state/form.svelte';
 
+	let { data } = $props();
+	let { validValues } = data;
 	let validate = $state(() => {});
 	let currentStep = $state(1);
 	let errors = $state([]);
@@ -21,46 +23,32 @@
 		{ label: 'Preview', icon: GraduationCap, component: ProgramSection }
 	];
 	const totalSteps = stepTitles.length;
-
 	let error = $state(null);
-	let formData = $state({
-		company: '',
-		position: '',
-		majors: [],
-		minors: [],
-		location: '',
-		workHours: 0,
-		coopYear: '1st',
-		coopCycle: 'Fall/Winter',
-		compensations: [],
-		level: 'Undergraduate',
-		source: 'SCDC',
-		offerStatus: 'Offered',
-		otherNotes: ''
-	});
 
-	$effect.pre(() => {
-		console.log('getting formData form local storage');
-		const savedFormData = localStorage.getItem('formData');
-		if (savedFormData) {
-			const parsedData = JSON.parse(savedFormData);
-			Object.keys(formData).forEach((key) => {
-				formData[key] = parsedData[key];
-			});
-		}
+	const formData = new FormData(validValues);
 
-		const savedFormStep = localStorage.getItem('formStep');
-		console.log(savedFormStep);
-		if (savedFormStep) {
-			currentStep = Number(savedFormStep);
-		}
-	});
-
-	$effect(() => {
-		console.log('setting formData to local storage');
-		localStorage.setItem('formData', JSON.stringify(formData));
-		localStorage.setItem('formStep', currentStep);
-	});
+	//$effect.pre(() => {
+	//	console.log('getting formData form local storage');
+	//	const savedFormData = localStorage.getItem('formData');
+	//	if (savedFormData) {
+	//		const parsedData = JSON.parse(savedFormData);
+	//		Object.keys(formData).forEach((key) => {
+	//			formData[key] = parsedData[key];
+	//		});
+	//	}
+	//
+	//	const savedFormStep = localStorage.getItem('formStep');
+	//	console.log(savedFormStep);
+	//	if (savedFormStep) {
+	//		currentStep = Number(savedFormStep);
+	//	}
+	//});
+	//
+	//$effect(() => {
+	//	console.log('setting formData to local storage');
+	//	localStorage.setItem('formData', JSON.stringify(formData));
+	//	localStorage.setItem('formStep', currentStep);
+	//});
 
 	$inspect(formData);
 
