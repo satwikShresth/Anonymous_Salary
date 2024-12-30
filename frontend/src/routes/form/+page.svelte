@@ -8,11 +8,12 @@
 	import Notification from '$lib/components/Notification.svelte';
 	import { Building2, DollarSign, CheckCircle2, GraduationCap } from 'lucide-svelte';
 	import { FormData } from './state/form.svelte';
+	import { localStore } from '$lib/LocalStore.svelte';
 
 	let { data } = $props();
 	let { validValues } = data;
 	let validate = $state(() => {});
-	let currentStep = $state(1);
+	let currStep = localStore('form:currStep', 1);
 	let errors = $state([]);
 
 	const stepTitles = [
@@ -25,30 +26,7 @@
 	const totalSteps = stepTitles.length;
 	let error = $state(null);
 
-	const formData = new FormData(validValues);
-
-	//$effect.pre(() => {
-	//	console.log('getting formData form local storage');
-	//	const savedFormData = localStorage.getItem('formData');
-	//	if (savedFormData) {
-	//		const parsedData = JSON.parse(savedFormData);
-	//		Object.keys(formData).forEach((key) => {
-	//			formData[key] = parsedData[key];
-	//		});
-	//	}
-	//
-	//	const savedFormStep = localStorage.getItem('formStep');
-	//	console.log(savedFormStep);
-	//	if (savedFormStep) {
-	//		currentStep = Number(savedFormStep);
-	//	}
-	//});
-	//
-	//$effect(() => {
-	//	console.log('setting formData to local storage');
-	//	localStorage.setItem('formData', JSON.stringify(formData));
-	//	localStorage.setItem('formStep', currentStep);
-	//});
+	const formData = FormData(validValues);
 
 	$inspect(formData);
 
@@ -57,20 +35,20 @@
 	}
 
 	function goToStep(step) {
-		currentStep = step;
+		currStep.value = step;
 	}
 
 	function goToPreviousStep() {
-		if (currentStep > 1) {
-			currentStep--;
+		if (currStep.value > 1) {
+			currStep.value--;
 		}
 	}
 
 	function goToNextStep(label) {
-		if (currentStep < totalSteps) {
+		if (currStep.value < totalSteps) {
 			const result = validate(formData);
 			if (result.isValid) {
-				currentStep++;
+				currStep.value++;
 				errors = [];
 				return;
 			}
@@ -113,14 +91,14 @@
 
 	<form onsubmit={handleSubmit} class="mx-36 max-w-6xl space-y-8 rounded-xl bg-white p-8 shadow-lg">
 		<FormProgress
-			bind:currentStep
+			bind:currentStep={currStep}
 			stepTitles={stepTitles.map((item) => item.label)}
 			onStepClick={goToStep}
 			{errors}
 		/>
 
 		{#each stepTitles as item, idx}
-			{#if idx + 1 === currentStep}
+			{#if idx + 1 === currStep.value}
 				<div class="space-y-6">
 					<h2 class="flex items-center gap-2 pt-4 text-xl font-semibold text-gray-900">
 						<item.icon class="h-8 w-8 text-blue-600" />
@@ -140,9 +118,9 @@
 			{/if}
 		{/each}
 
-		{#if currentStep <= totalSteps}
+		{#if currStep.value <= totalSteps}
 			<FormNavigation
-				{currentStep}
+				bind:currentStep={currStep}
 				{totalSteps}
 				onPrevious={goToPreviousStep}
 				onNext={goToNextStep}

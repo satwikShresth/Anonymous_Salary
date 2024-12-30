@@ -1,10 +1,10 @@
 <script>
-	const { currentStep, totalSteps, onPrevious, onNext } = $props();
-	const isPreviewStep = $derived(currentStep === totalSteps);
+	const { currentStep = $bindable(), totalSteps, onPrevious, onNext } = $props();
+	const isPreviewStep = $derived(currentStep.value === totalSteps);
 </script>
 
 <div class="flex justify-between border-t border-gray-200 pt-6">
-	{#if currentStep > 1}
+	{#if currentStep.value > 1}
 		<button
 			type="button"
 			onclick={onPrevious}

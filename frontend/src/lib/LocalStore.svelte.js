@@ -11,6 +11,11 @@ export class LocalStore{
       if (item) this.#value = this.deserialize(item);
     }
 
+    $effect(() => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(this.#key, this.serialize(this.#value));
+      }
+    });
   };
 
   serialize(value){
@@ -25,13 +30,10 @@ export class LocalStore{
 
   get value() {return this.#value}
 
-  set value(value) {
-    console.log(this.#key,value)
-    this.#value = value
-    if (typeof window !== "undefined") {
-      localStorage.setItem(this.#key, this.serialize(this.#value));
-    }
+  set value(newValue) {
+    this.#value = newValue;
   }
+
 }
 
 export function localStore(key, value) {

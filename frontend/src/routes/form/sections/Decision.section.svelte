@@ -2,7 +2,7 @@
 	import { BadgeDollarSign, CheckCircle2, FileText } from 'lucide-svelte';
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
 
-	let { formData = {}, validate = $bindable(), validValues = $bindable() } = $props();
+	let { formData = $bindable(), validate = $bindable(), validValues = $bindable() } = $props();
 
 	validate = () => ({ isValid: true, errors: [] });
 </script>

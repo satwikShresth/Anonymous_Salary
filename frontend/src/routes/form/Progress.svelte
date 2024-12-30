@@ -3,11 +3,11 @@
 	const { currentStep = $bindable(), onStepClick, stepTitles, errors } = $props();
 
 	const hasErrors = $derived(Object.keys(errors).length > 0);
-	const progressWidth = $derived(`${((currentStep - 1) / (stepTitles.length - 1)) * 100}%`);
+	const progressWidth = $derived(`${((currentStep.value - 1) / (stepTitles.length - 1)) * 100}%`);
 
 	function getStepClasses(stepNumber) {
-		const isComplete = currentStep > stepNumber;
-		const isCurrent = currentStep === stepNumber;
+		const isComplete = currentStep.value > stepNumber;
+		const isCurrent = currentStep.value === stepNumber;
 		const hasError = hasErrors && isCurrent;
 		const badgeColor = isComplete
 			? 'bg-green-500 text-white'
@@ -21,7 +21,7 @@
 	}
 
 	function getTitleClasses(stepNumber) {
-		const isCurrent = currentStep === stepNumber;
+		const isCurrent = currentStep.value === stepNumber;
 		const hasError = hasErrors && isCurrent;
 
 		return `text-sm mt-1 ${
@@ -38,7 +38,7 @@
 	<div class="mb-2 flex justify-between">
 		{#each stepTitles as _, index}
 			{@const stepNumber = index + 1}
-			{@const isComplete = currentStep > stepNumber}
+			{@const isComplete = currentStep.value > stepNumber}
 			<button
 				type="button"
 				onclick={() => onStepClick(stepNumber)}

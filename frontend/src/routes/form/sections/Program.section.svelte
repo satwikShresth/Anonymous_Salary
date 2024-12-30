@@ -5,7 +5,7 @@
 	import { BookCopy, Bookmark, Calendar, GraduationCap, SunSnow } from 'lucide-svelte';
 
 	let {
-		formData = {},
+		formData = $bindable(),
 		validate = $bindable(),
 		validValues = $bindable(),
 		onChange = ({ level, majors, minors, coopCycle, coopYear }) => {}
@@ -36,9 +36,8 @@
 		<RadioGroup
 			label="Level"
 			icon={GraduationCap}
-			value={formData.level}
+			bind:value={formData.level}
 			apiEndpoint="/api/v1/options/program"
-			onChange={(level) => onChange({ level })}
 		/>
 	</div>
 </div>
@@ -50,8 +49,7 @@
 			icon={Bookmark}
 			bind:queryDep={formData.level}
 			apiEndpoint="/api/v1/options/majors"
-			values={formData.majors}
-			onChange={(majors) => onChange({ majors })}
+			bind:values={formData.majors}
 		/>
 	</div>
 	<div class="flex-1">
@@ -60,8 +58,7 @@
 			icon={BookCopy}
 			bind:queryDep={formData.level}
 			apiEndpoint="/api/v1/options/minors"
-			values={formData.minors}
-			onChange={(minors) => onChange({ minors })}
+			bind:values={formData.minors}
 		/>
 	</div>
 </div>
@@ -69,11 +66,10 @@
 <div class="flex justify-between gap-6 py-3">
 	<div class="flex-1">
 		<RadioGroup
-			value={formData.coopCycle}
+			bind:value={formData.coopCycle}
 			icon={SunSnow}
 			label="Coop Cycle"
 			apiEndpoint="/api/v1/options/coop/cycle"
-			onChange={(coopCycle) => onChange({ coopCycle })}
 		/>
 	</div>
 
@@ -81,9 +77,8 @@
 		<RadioGroup
 			label="Coop Year"
 			icon={Calendar}
-			value={formData.coopYear}
+			bind:value={formData.coopYear}
 			apiEndpoint="/api/v1/options/coop/years"
-			onChange={(coopYear) => onChange({ coopYear })}
 		/>
 	</div>
 </div>
