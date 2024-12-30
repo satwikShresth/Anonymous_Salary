@@ -1,9 +1,19 @@
 <script>
 	import { Check } from 'lucide-svelte';
+	import { Tween } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+
+	let progress = new Tween(0, {
+		duration: 600,
+		easing: cubicOut
+	});
 	const { currentStep = $bindable(), onStepClick, stepTitles, errors } = $props();
 
 	const hasErrors = $derived(Object.keys(errors).length > 0);
-	const progressWidth = $derived(`${((currentStep.value - 1) / (stepTitles.length - 1)) * 100}%`);
+
+	$effect(() => {
+		progress.target = (currentStep.value - 1) / (stepTitles.length - 1);
+	});
 
 	function getStepClasses(stepNumber) {
 		const isComplete = currentStep.value > stepNumber;
@@ -58,11 +68,36 @@
 		{/each}
 	</div>
 	<div class="relative mt-4">
-		<div class="absolute left-0 top-0 h-2 w-full rounded bg-gray-200">
-			<div
-				class="absolute left-0 top-0 h-full rounded bg-blue-600 transition-all duration-300"
-				style="width: {progressWidth}"
-			></div>
-		</div>
+		<progress
+			class="absolute left-0 top-0 h-2 w-full rounded-xl bg-gray-200"
+			value={progress.current}
+		></progress>
 	</div>
 </div>
+
+<style>
+	progress {
+		display: block;
+		width: 100%;
+		height: 8px; /* Adjust height */
+		border-radius: 9999px; /* Fully rounded edges */
+		overflow: hidden; /* Ensure inner progress doesn't spill outside rounded edges */
+		background-color: #e5e7eb; /* Tailwind gray-200 equivalent */
+		box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1); /* Subtle inset shadow */
+	}
+
+	progress::-webkit-progress-bar {
+		background-color: #e5e7eb; /* Background color */
+		border-radius: 9999px; /* Consistent rounded edges */
+	}
+
+	progress::-webkit-progress-value {
+		background-color: #3b82f6; /* Tailwind blue-500 */
+		border-radius: 9999px; /* Rounded edges */
+	}
+
+	progress::-moz-progress-bar {
+		background-color: #3b82f6; /* Tailwind blue-500 */
+		border-radius: 9999px; /* Rounded edges */
+	}
+</style>

@@ -1,13 +1,14 @@
 import {localStore} from "$lib/LocalStore.svelte"
 
 export function FormData(validValues) {
+  const currentYear = new Date().getFullYear()+1
   let company = localStore("formData:company", "");
   let position = localStore("formData:position", "");
   let majors = localStore("formData:majors", []);
   let minors = localStore("formData:minors", []);
   let location = localStore("formData:location", "");
-  let workHours = localStore("formData:workHours", 0);
-  console.log(validValues.coopYears)
+  let workHours = localStore("formData:workHours", 40);
+  let year = localStore("formData:coopYear", currentYear);
   let coopYear = localStore("formData:coopYear", validValues.coopYears[0]);
   let coopCycle = localStore("formData:coopCycle", validValues.coopCycles[0]);
   let compensations = localStore("formData:compensations", []);
@@ -55,6 +56,15 @@ export function FormData(validValues) {
         throw new Error("Location must be a non-empty string");
       }
       location.value = value.trim();
+    },
+
+
+    get year() { return year.value; },
+    set year(value) {
+      if (typeof value !== "number" || value < 1990 || value > currentYear+2 ) {
+        throw new Error(`Work hours must be between 1990 and ${currentYear}`);
+      }
+      year.value = Math.round(value);
     },
 
     get workHours() { return workHours.value; },

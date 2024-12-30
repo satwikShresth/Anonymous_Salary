@@ -5,6 +5,7 @@
 	import ProgramSection from './sections/Program.section.svelte';
 	import DecisionSection from './sections/Decision.section.svelte';
 	import CompensationSection from './sections/Compensation.section.svelte';
+	import PreviewSection from './sections/Preview.section.svelte';
 	import Notification from '$lib/components/Notification.svelte';
 	import { Building2, DollarSign, CheckCircle2, GraduationCap } from 'lucide-svelte';
 	import { FormData } from './state/form.svelte';
@@ -21,7 +22,7 @@
 		{ label: 'Compensation', icon: DollarSign, component: CompensationSection },
 		{ label: 'Decision', icon: CheckCircle2, component: DecisionSection },
 		{ label: 'Program', icon: GraduationCap, component: ProgramSection },
-		{ label: 'Preview', icon: GraduationCap, component: ProgramSection }
+		{ label: 'Preview', icon: GraduationCap, component: PreviewSection }
 	];
 	const totalSteps = stepTitles.length;
 	let error = $state(null);

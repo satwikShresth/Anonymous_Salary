@@ -4,12 +4,7 @@
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
 	import { BookCopy, Bookmark, Calendar, GraduationCap, SunSnow } from 'lucide-svelte';
 
-	let {
-		formData = $bindable(),
-		validate = $bindable(),
-		validValues = $bindable(),
-		onChange = ({ level, majors, minors, coopCycle, coopYear }) => {}
-	} = $props();
+	let { formData = $bindable(), validate = $bindable(), validValues = $bindable() } = $props();
 	let error = $state(null);
 
 	validate = ({ level, majors, minors, coopCycle, coopYear }) => {

@@ -1,6 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Building2, Clock5, MapPin, Briefcase, University } from 'lucide-svelte';
+	import {
+		Building2,
+		Clock5,
+		MapPin,
+		Briefcase,
+		University,
+		Calendar,
+		CalendarDays
+	} from 'lucide-svelte';
+	import { Datepicker } from 'flowbite-svelte';
 	import AutoComplete from '$lib/components/AutoComplete.svelte';
 	import Slider from '$lib/components/Slider.svelte';
 	import MultiSelect from '$lib/components/MultiSelect.svelte';
@@ -66,13 +75,25 @@
 	</div>
 </div>
 
-<div class="mx-24 w-auto py-3">
-	<Slider
-		label="Work Hours"
-		bind:value={formData.workHours}
-		min={20}
-		max={80}
-		icon={Clock5}
-		unit="hrs/week"
-	/>
+<div class="flex justify-between gap-6 py-3">
+	<div class="flex-1">
+		<Slider
+			label="Work Hours"
+			bind:value={formData.workHours}
+			min={20}
+			max={80}
+			icon={Clock5}
+			unit="hrs/week"
+		/>
+	</div>
+	<div class="flex-1">
+		<Slider
+			label="Year"
+			bind:value={formData.year}
+			min={1990}
+			max={new Date().getFullYear() + 2}
+			icon={CalendarDays}
+			unit=""
+		/>
+	</div>
 </div>

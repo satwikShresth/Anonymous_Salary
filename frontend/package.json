@@ -42,6 +42,7 @@
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "axios": "^1.7.9",
+    "flowbite-svelte": "^0.47.4",
     "lucide-svelte": "^0.469.0",
     "svelte-adapter-deno": "^0.9.1"
   }
