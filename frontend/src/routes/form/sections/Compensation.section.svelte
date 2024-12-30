@@ -35,6 +35,7 @@
 
 	function handleTypeChange(item, newType) {
 		const newRange = compensationRanges[newType];
+
 		return {
 			...item,
 			type: newType,
@@ -52,33 +53,26 @@
 	>
 		<div class="flex items-center justify-between">
 			<span class="text-sm font-medium text-gray-700">
-				{#if item.type === 'Hourly'}
-					Hourly Rate
-				{:else}
-					<select
-						value={item.type}
-						onchange={(e) =>
-							handleUpdateCompensation(index, handleTypeChange(item, e.target.value))}
-						class="border-none bg-transparent p-0 pr-8 focus:ring-0"
-					>
-						{#each compensationTypes as type}
-							<option value={type.value}>
-								{type.label}
-							</option>
-						{/each}
-					</select>
-				{/if}
+				<select
+					value={item.type}
+					onchange={(e) => handleUpdateCompensation(index, handleTypeChange(item, e.target.value))}
+					class="border-none bg-transparent p-0 pr-8 focus:ring-0"
+				>
+					{#each compensationTypes as type}
+						<option value={type.value}>
+							{type.label}
+						</option>
+					{/each}
+				</select>
 			</span>
 
-			{#if item.type !== 'Hourly'}
-				<button
-					type="button"
-					onclick={() => handleRemoveCompensation(index)}
-					class="text-gray-400 transition-colors hover:text-gray-600"
-				>
-					<X class="h-4 w-4" />
-				</button>
-			{/if}
+			<button
+				type="button"
+				onclick={() => handleRemoveCompensation(index)}
+				class="text-gray-400 transition-colors hover:text-gray-600"
+			>
+				<X class="h-4 w-4" />
+			</button>
 		</div>
 
 		<div class="space-y-4">

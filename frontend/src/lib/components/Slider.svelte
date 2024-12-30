@@ -8,19 +8,14 @@
 	let sliderId = `slider-${Math.random().toString(36).substr(2, 9)}`;
 	let percentage = $derived(((value - min) / (max - min)) * 100);
 
-	function handleSliderChange(e) {
-		currentValue = Number(e.target.value);
-		value = currentValue;
-	}
-
-	function handleInputChange(e) {
-		const newValue = Number(e.target.value);
-		if (newValue >= min && newValue <= max) {
-			currentValue = newValue;
-			value = currentValue;
+	$effect(() => {
+		if (value < min) {
+			value = min;
 		}
-	}
-	$inspect(focused);
+		if (value > max) {
+			value = max;
+		}
+	});
 </script>
 
 <div class=" gap-4">
@@ -38,9 +33,8 @@
 			{max}
 			id={sliderId}
 			type="range"
-			value={currentValue}
+			bind:value
 			step="1"
-			oninput={handleSliderChange}
 			class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
 			style="background: linear-gradient(to right, rgb(59 130 246) {percentage}%, rgb(229 231 235) {percentage}%)"
 			aria-label={label}
@@ -51,8 +45,7 @@
 			{max}
 			onfocusin={() => (focused = true)}
 			onfocusout={() => (focused = false)}
-			value={currentValue}
-			oninput={handleInputChange}
+			bind:value
 			class=" pl w-[90] rounded-md border-transparent outline-transparent ring-transparent focus:border-transparent focus:outline-transparent focus:ring-transparent"
 			aria-label={`${label} number input`}
 		/>
