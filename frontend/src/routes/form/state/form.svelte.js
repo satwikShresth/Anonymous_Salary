@@ -9,6 +9,7 @@ export function FormData(validValues) {
   let location = localStore("formData:location", "");
   let workHours = localStore("formData:workHours", 40);
   let year = localStore("formData:coopYear", currentYear);
+  console.log(validValues.coopYears)
   let coopYear = localStore("formData:coopYear", validValues.coopYears[0]);
   let coopCycle = localStore("formData:coopCycle", validValues.coopCycles[0]);
   let compensations = localStore("formData:compensations", []);

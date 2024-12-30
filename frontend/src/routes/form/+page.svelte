@@ -10,6 +10,7 @@
 	import { Building2, DollarSign, CheckCircle2, GraduationCap } from 'lucide-svelte';
 	import { FormData } from './state/form.svelte';
 	import { localStore } from '$lib/LocalStore.svelte';
+	import { browser } from '$app/environment';
 
 	let { data } = $props();
 	let { validValues } = data;
@@ -84,6 +85,14 @@
 				formData[name] = value;
 			}
 		}
+	}
+
+	if (browser) {
+		window.onerror = (message) => {
+			if (!errors.includes(message)) {
+				errors.push(message);
+			}
+		};
 	}
 </script>
 
