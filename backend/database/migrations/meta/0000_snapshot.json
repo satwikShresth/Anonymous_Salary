@@ -1,5 +1,5 @@
 {
-  "id": "81b72184-5003-4b2b-8fc5-eea862ff1698",
+  "id": "cb94bbd2-743b-40f4-b876-3d86c9eae6b7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -361,7 +361,7 @@
         },
         "year": {
           "name": "year",
-          "type": "date",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -398,19 +398,6 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
-        },
-        "decision": {
-          "name": "decision",
-          "type": "decision_type",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "reason": {
-          "name": "reason",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": false
         },
         "notes": {
           "name": "notes",

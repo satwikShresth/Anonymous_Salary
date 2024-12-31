@@ -11,6 +11,7 @@
 	import { FormData } from './state/form.svelte';
 	import { localStore } from '$lib/LocalStore.svelte';
 	import { browser } from '$app/environment';
+	import axios from 'axios';
 
 	let { data } = $props();
 	let { validValues } = data;
@@ -35,13 +36,25 @@
 	function handleSubmit(event) {
 		event.preventDefault();
 	}
-	function onSubmit() {
-		console.log(formData.finalData);
-		formData.clear();
-		currStep.clear();
 
-		if (browser) {
-			location.reload();
+	async function onSubmit() {
+		try {
+			await axios.post('api/v1/form/submit', formData.finalData, {
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			//formData.clear();
+			//currStep.clear();
+
+			//if (browser) {
+			//	location.reload();
+			//}
+		} catch (err) {
+			const errorMessages = err.response?.data;
+			console.error(errorMessages);
+			errors.push(`Error: ${JSON.stringify(errorMessages)}`);
 		}
 	}
 

@@ -54,14 +54,12 @@ CREATE TABLE "submission" (
 	"position_id" uuid NOT NULL,
 	"program_level" "program_level_type" NOT NULL,
 	"source" "source_type" NOT NULL,
-	"year" date NOT NULL,
+	"year" integer NOT NULL,
 	"coop_cycle" "coop_cycle_type" NOT NULL,
 	"coop_year" "coop_year_type" NOT NULL,
 	"location_id" uuid NOT NULL,
 	"work_hours" integer DEFAULT 40 NOT NULL,
 	"offer_status" "offer_status_type" NOT NULL,
-	"decision" "decision_type" NOT NULL,
-	"reason" varchar(100),
 	"notes" varchar(255),
 	"created_at" timestamp DEFAULT now() NOT NULL
 );

@@ -21,14 +21,14 @@ export const offerStatusTypeEnum = createSelectSchema(schema.offerStatusType);
 export const decisionTypeEnum = createSelectSchema(schema.decisionType);
 
 export const JobDataSchema = z.object({
-   companyName: insertCompanySchema.shape.name,
+   company: insertCompanySchema.shape.name,
    position: insertPositionSchema.shape.name,
    majors: z.array(insertMajorSchema.shape.name).min(1),
    minors: z.array(insertMinorSchema.shape.name).optional().default([]),
    location: z.string().regex(/^[^,]+,\s*[^,]+$/),
    year: z.preprocess(
       (val) => Number(val),
-      z.number().positive().min(1990).max(new Date().getFullYear()+2),
+      z.number().positive().min(1990).max(new Date().getFullYear() + 2),
    ),
    workHours: z.preprocess(
       (val) => Number(val),
@@ -50,8 +50,6 @@ export const JobDataSchema = z.object({
    level: programLevelTypeEnum,
    source: sourceTypeEnum,
    offerStatus: offerStatusTypeEnum,
-   decision: decisionTypeEnum,
-   decisionReason: insertSubmissionSchema.shape.reason,
    otherNotes: insertSubmissionSchema.shape.notes,
    majorIds: z.array(z.string()).default([]), // Added majorIds
    minorIds: z.array(z.string()).default([]), // Added minorIds

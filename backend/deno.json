@@ -10,10 +10,12 @@
     "express-validator": "npm:express-validator@^7.2.1",
     "models": "./src/models/mod.ts",
     "morgan": "npm:morgan@^1.10.0",
+    "multer": "npm:multer@^1.4.5-lts.1",
     "pg": "npm:pg@^8.13.1",
     "postgres": "npm:postgres@^3.4.5",
     "qs": "npm:qs@^6.13.1",
-    "zod": "npm:zod@^3.24.1"
+    "zod": "npm:zod@^3.24.1",
+    "zod-express-middleware": "npm:zod-express-middleware@^1.4.0"
   },
   "fmt": {
     "useTabs": false,
@@ -25,8 +27,8 @@
   },
   "tasks": {
     "dev": "deno -A --watch src/index.ts",
-    "db:migrate": "deno run --env-file=../.env -A npm:drizzle-kit migrate --config=./config/drizzle.config.ts",
-    "db:migrate:generate": "deno run --env-file=../.env -A npm:drizzle-kit generate --config=./config/drizzle.config.ts --name ",
+    "db:migrate": "deno run --env-file=../.env -A npm:drizzle-kit migrate",
+    "db:migrate:generate": "deno run --env-file=../.env -A npm:drizzle-kit generate --name ",
     "db:migrate:push": "deno run -A npm:drizzle-kit push --force",
     "db:seed": "deno run -A ./database/seeds/seed.ts",
     "dev:db:seed": "deno run -A --env-file=../.env ./database/seeds/seed.ts"
