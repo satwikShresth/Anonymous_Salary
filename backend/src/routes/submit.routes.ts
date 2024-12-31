@@ -66,7 +66,6 @@ export default () => {
             .map(([key, value]) => filters[key]?.(value))
             .filter(Boolean);
 
-         // Create a subquery for better performance with pagination
          const subQuery = db
             .select({
                id: submission.id,
@@ -88,14 +87,13 @@ export default () => {
          const query = await db
             .select({
                id: submission.id,
-               companyName: company.name,
+               company: company.name,
                position: position.name,
                programLevel: submission.programLevel,
+               year: submission.year,
                source: submission.source,
                workHours: submission.workHours,
                offerStatus: submission.offerStatus,
-               decision: submission.decision,
-               decisionReason: submission.reason,
                otherNotes: submission.notes,
                coopYear: submission.coopYear,
                coopCycle: submission.coopCycle,
@@ -144,6 +142,7 @@ export default () => {
                   minors: minors.map((m) => m.name),
                   location: `${job.city}, ${job.state}`,
                   workHours: job.workHours,
+                  year: job.year,
                   coopYear: job.coopYear,
                   coopCycle: job.coopCycle,
                   compensations: compensations.map((comp) => ({
@@ -155,8 +154,6 @@ export default () => {
                   level: job.programLevel,
                   source: job.source,
                   offerStatus: job.offerStatus,
-                  decision: job.decision,
-                  decisionReason: job.decisionReason || '',
                   otherNotes: job.otherNotes || '',
                };
             }),
