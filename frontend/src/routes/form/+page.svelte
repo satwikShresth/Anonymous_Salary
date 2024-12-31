@@ -35,18 +35,27 @@
 	function handleSubmit(event) {
 		event.preventDefault();
 	}
+	function onSubmit() {
+		console.log(formData.finalData);
+		formData.clear();
+		currStep.clear();
+
+		if (browser) {
+			location.reload();
+		}
+	}
 
 	function goToStep(step) {
 		currStep.value = step;
 	}
 
-	function goToPreviousStep() {
+	function onPrevious() {
 		if (currStep.value > 1) {
 			currStep.value--;
 		}
 	}
 
-	function goToNextStep(label) {
+	function onNext(label) {
 		if (currStep.value < totalSteps) {
 			const result = validate(formData);
 			if (result.isValid) {
@@ -129,12 +138,7 @@
 		{/each}
 
 		{#if currStep.value <= totalSteps}
-			<FormNavigation
-				bind:currentStep={currStep}
-				{totalSteps}
-				onPrevious={goToPreviousStep}
-				onNext={goToNextStep}
-			/>
+			<FormNavigation bind:currentStep={currStep} {totalSteps} {onPrevious} {onNext} {onSubmit} />
 		{/if}
 	</form>
 </div>

@@ -26,6 +26,12 @@ export class LocalStore{
     return JSON.parse(item);
   }
 
+  clear(){
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(this.#key);
+      }
+  }
+
   get key() {return this.#key}
 
   get value() {return this.#value}

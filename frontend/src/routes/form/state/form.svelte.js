@@ -8,7 +8,7 @@ export function FormData(validValues) {
   let minors = localStore("formData:minors", []);
   let location = localStore("formData:location", "");
   let workHours = localStore("formData:workHours", 40);
-  let year = localStore("formData:coopYear", currentYear);
+  let year = localStore("formData:year", currentYear);
   console.log(validValues.coopYears)
   let coopYear = localStore("formData:coopYear", validValues.coopYears[0]);
   let coopCycle = localStore("formData:coopCycle", validValues.coopCycles[0]);
@@ -17,8 +17,48 @@ export function FormData(validValues) {
   let source = localStore("formData:source", validValues.sources[0]);
   let offerStatus = localStore("formData:offerStatus", validValues.offerStatuses[0]);
   let otherNotes = localStore("formData:otherNotes", "");
+  let finalData = $derived(
+    JSON.stringify(
+      {
+        company : company.value,
+        position : position.value,
+        majors : majors.value,
+        minors : minors.value,
+        location : location.value,
+        workHours : workHours.value,
+        year : year.value,
+        coopYear : coopYear.value,
+        coopCycle : coopCycle.value,
+        compensations : compensations.value,
+        level : level.value,
+        source : source.value,
+        offerStatus : offerStatus.value,
+        otherNotes : otherNotes.value
+      }
+    )
+  )
 
   return {
+    get finalData(){ return finalData },
+    clear(){
+      [
+        company,
+        position,
+        majors,
+        minors,
+        location,
+        workHours,
+        year,
+        coopYear,
+        coopCycle,
+        compensations,
+        level,
+        source,
+        offerStatus,
+        otherNotes
+      ].forEach(element => element.clear());
+
+    },
     get company() { return company.value; },
     set company(value) {
       if (typeof value !== "string" || value.trim().length === 0) {

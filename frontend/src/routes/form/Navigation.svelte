@@ -1,5 +1,5 @@
 <script>
-	const { currentStep = $bindable(), totalSteps, onPrevious, onNext } = $props();
+	const { currentStep = $bindable(), totalSteps, onPrevious, onNext, onSubmit } = $props();
 	const isPreviewStep = $derived(currentStep.value === totalSteps);
 </script>
 
@@ -18,6 +18,7 @@
 		{#if isPreviewStep}
 			<button
 				type="submit"
+				onclick={onSubmit}
 				class="rounded-lg bg-green-400 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
 			>
 				Submit
