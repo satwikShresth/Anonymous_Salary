@@ -41,9 +41,14 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
+    "@tanstack/svelte-table": "^8.20.5",
+    "@tanstack/table-core": "^8.20.5",
     "axios": "^1.7.9",
     "flowbite-svelte": "^0.47.4",
+    "gridjs": "^6.2.0",
     "lucide-svelte": "^0.469.0",
-    "svelte-adapter-deno": "^0.9.1"
+    "sortablejs": "^1.15.6",
+    "svelte-adapter-deno": "^0.9.1",
+    "svelte-headless-table": "^0.18.3"
   }
 }
