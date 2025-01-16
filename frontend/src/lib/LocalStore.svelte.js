@@ -1,10 +1,13 @@
 export class LocalStore{
+  #original = '';
   #value = $state();
   #key = '';
 
   constructor(key, value) {
+
     this.#key = key;
     this.#value = value;
+    this.#original = value;
 
     if (typeof window !== "undefined") {
       const item = localStorage.getItem(key);
@@ -30,6 +33,7 @@ export class LocalStore{
       if (typeof window !== "undefined") {
         localStorage.removeItem(this.#key);
       }
+    this.#value = this.#original;
   }
 
   get key() {return this.#key}

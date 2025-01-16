@@ -4,8 +4,9 @@
 
 	let {
 		apiEndpoint = '/api/options/countries',
-		queryDep = $bindable(''),
 		value = $bindable(''),
+		queryDep = '',
+		disabled = false,
 		label = '',
 		icon = null,
 		debounceMs = 500
@@ -111,6 +112,7 @@
 		aria-expanded={isOpen}
 		aria-controls="autocomplete-options"
 		aria-autocomplete="list"
+		{disabled}
 	/>
 	{#if isOpen || isOptionClickPending}
 		<div

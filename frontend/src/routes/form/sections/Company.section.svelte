@@ -48,8 +48,9 @@
 	<div class="flex-1">
 		<AutoComplete
 			bind:value={formData.position}
+			queryDep={formData.company}
+			disabled={formData.company === ''}
 			icon={Briefcase}
-			bind:queryDep={formData.company}
 			label="Position"
 			apiEndpoint="/api/v1/options/position"
 		/>

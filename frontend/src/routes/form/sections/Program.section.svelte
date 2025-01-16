@@ -4,7 +4,7 @@
 	import RadioGroup from '$lib/components/RadioGroup.svelte';
 	import { BookCopy, Bookmark, Calendar, GraduationCap, SunSnow } from 'lucide-svelte';
 
-	let { formData = $bindable(), validate = $bindable(), validValues = $bindable() } = $props();
+	let { formData = $bindable(), validate = $bindable(), validValues } = $props();
 	let error = $state(null);
 
 	validate = ({ level, majors, minors, coopCycle, coopYear }) => {
@@ -42,7 +42,7 @@
 		<MultiSelect
 			label="Majors"
 			icon={Bookmark}
-			bind:queryDep={formData.level}
+			queryDep={formData.level}
 			apiEndpoint="/api/v1/options/majors"
 			bind:values={formData.majors}
 		/>
@@ -51,7 +51,7 @@
 		<MultiSelect
 			label="Minors"
 			icon={BookCopy}
-			bind:queryDep={formData.level}
+			queryDep={formData.level}
 			apiEndpoint="/api/v1/options/minors"
 			bind:values={formData.minors}
 		/>

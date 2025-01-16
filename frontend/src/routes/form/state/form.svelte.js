@@ -65,6 +65,7 @@ export function FormData(validValues) {
         throw new Error("Company name must be a non-empty string");
       }
       company.value = value.trim();
+      position.clear();
     },
 
     get position() { return position.value; },
@@ -145,6 +146,8 @@ export function FormData(validValues) {
       if (!validValues.levels.includes(value)) {
         throw new Error("Invalid level");
       }
+      majors.clear();
+      minors.clear();
       level.value = value;
     },
 

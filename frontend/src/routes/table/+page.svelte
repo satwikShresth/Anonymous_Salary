@@ -1,7 +1,6 @@
 <script>
 	import { localStore } from '$lib/LocalStore.svelte';
 
-	// State management
 	let rawData = $state([]);
 	let displayData = $state([]);
 	let loading = $state(true);
@@ -9,7 +8,6 @@
 	let sortColumn = $state(null);
 	let sortDirection = $state('asc');
 
-	// Get column order from local storage
 	const columnOrder = localStore('table:column', [
 		'company',
 		'position',
@@ -137,7 +135,6 @@
 		displayData = sorted;
 	}
 
-	// Handle sort
 	function handleSort(columnKey) {
 		if (sortColumn === columnKey) {
 			sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
@@ -148,17 +145,14 @@
 		updateDisplayData();
 	}
 
-	// Handle drag start: store the starting column index
 	function handleDragStart(event, startIndex) {
 		event.dataTransfer.setData('text/plain', startIndex);
 	}
 
-	// Allow drop
 	function handleDragOver(event) {
 		event.preventDefault();
 	}
 
-	// Handle drop: reorder columnOrder based on the dragged and target indices
 	function handleDrop(event, dropIndex) {
 		const startIndex = +event.dataTransfer.getData('text/plain');
 		if (startIndex === dropIndex) return;
@@ -169,12 +163,7 @@
 		columnOrder.value = updatedOrder;
 	}
 
-	$inspect(columns);
-	$inspect(columnOrder.value);
-
-	$effect(() => {
-		loadData();
-	});
+	$effect(loadData);
 </script>
 
 <div class="mx-10 my-10 mb-8 max-w-full px-4 py-10">

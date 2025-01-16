@@ -31,8 +31,6 @@
 
 	const formData = FormData(validValues);
 
-	$inspect(formData);
-
 	function handleSubmit(event) {
 		event.preventDefault();
 	}
@@ -80,35 +78,6 @@
 		}
 	}
 
-	$inspect(errors);
-
-	function onChange(updates) {
-		if (updates.target) {
-			const { name, value } = updates.target;
-
-			handleSingleUpdate(name, value);
-		} else {
-			Object.entries(updates).forEach(([name, value]) => {
-				handleSingleUpdate(name, value);
-			});
-		}
-	}
-
-	function handleSingleUpdate(name, value) {
-		if (name in formData) {
-			if (Array.isArray(formData[name])) {
-				const arrayValue = Array.isArray(value)
-					? value
-					: value.split(',').map((item) => item.trim());
-				formData[name] = arrayValue;
-			} else if (name === 'workHours') {
-				formData[name] = Number(value);
-			} else {
-				formData[name] = value;
-			}
-		}
-	}
-
 	if (browser) {
 		window.onerror = (message) => {
 			if (!errors.includes(message)) {
@@ -144,7 +113,7 @@
 					</h2>
 
 					<div class="space-y-4 px-5">
-						<item.component bind:validate {formData} {onChange} />
+						<item.component bind:validate {formData} {validValues} />
 					</div>
 				</div>
 			{/if}

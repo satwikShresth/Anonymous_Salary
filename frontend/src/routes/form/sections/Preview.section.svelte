@@ -14,7 +14,7 @@
 	} from 'lucide-svelte';
 	import { compensationRanges } from './compensationTypes.js';
 
-	let { formData = $bindable(), validate = $bindable(), validValues = $bindable() } = $props();
+	let { formData = $bindable(), validate = $bindable(), validValues } = $props();
 
 	function formatCompensations(compensations) {
 		return compensations.map((comp) => `${comp.type}: $${comp.amount}`).join(', ');

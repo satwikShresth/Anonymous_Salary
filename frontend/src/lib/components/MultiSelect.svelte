@@ -5,8 +5,9 @@
 
 	let {
 		apiEndpoint = '/api/options/countries',
-		queryDep = $bindable(''),
+		queryDep = '',
 		values = $bindable(['']),
+		disabled = false,
 		label = '',
 		max = 5,
 		icon = null,
@@ -117,13 +118,16 @@
 					bind:value={inputValue}
 					oninput={handleInputChange}
 					onfocusin={() => (isOpen = true)}
-					onfocusout={() => (isOpen = false)}
+					onfocusout={() => {
+						inputValue = '';
+						isOpen = false;
+					}}
 					class="min-w-[120px] flex-1 border-transparent p-1 outline-none"
 					placeholder="Type to search..."
 					aria-expanded={isOpen}
 					aria-controls="multiselect-options"
 					role="combobox"
-					{...props}
+					{disabled}
 				/>
 			</div>
 		</div>
