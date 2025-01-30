@@ -14,7 +14,6 @@ import {
    compensationType,
    coopCycleType,
    coopYearType,
-   decisionType,
    offerStatusType,
    programLevelType,
    sourceType,
@@ -71,7 +70,7 @@ export const submission = pgTable('submission', {
    }),
    programLevel: programLevelType('program_level').notNull(),
    source: sourceType('source').notNull(),
-   year: date('year').notNull(),
+   year: integer('year').notNull(),
    coopCycle: coopCycleType('coop_cycle').notNull(),
    coopYear: coopYearType('coop_year').notNull(),
    locationId: uuid('location_id').notNull().references(() => location.id, {
@@ -79,8 +78,6 @@ export const submission = pgTable('submission', {
    }),
    workHours: integer('work_hours').notNull().default(40),
    offerStatus: offerStatusType('offer_status').notNull(),
-   decision: decisionType('decision').notNull(),
-   reason: varchar('reason', { length: 100 }),
    notes: varchar('notes', { length: 255 }),
    createdAt: timestamp('created_at').notNull().defaultNow(),
 });

@@ -4,9 +4,7 @@ WORKDIR /app
 
 RUN apk add --no-cache libstdc++
 
-COPY ./src /app/src
-COPY ./config /app/config
-COPY ./database /app/database
+COPY . .
 
 COPY ./deno.* /app/
 COPY ./*.ts /app/

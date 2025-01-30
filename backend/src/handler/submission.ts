@@ -1,9 +1,8 @@
 import { db } from 'db';
 import { schema } from 'db/schema';
-import { type JobData } from 'validation';
 import { and, eq } from 'drizzle-orm';
 
-export async function handleJobSubmission(data: JobData) {
+export async function handleJobSubmission(data) {
    const validatedData = data;
    console.log(validatedData);
 
@@ -12,13 +11,13 @@ export async function handleJobSubmission(data: JobData) {
       let companyRecord = await tx
          .select()
          .from(schema.company)
-         .where(eq(schema.company.name, validatedData.companyName))
+         .where(eq(schema.company.name, validatedData.company))
          .limit(1);
 
       if (companyRecord.length === 0) {
          [companyRecord] = await tx
             .insert(schema.company)
-            .values({ name: validatedData.companyName })
+            .values({ name: validatedData.company })
             .returning();
       } else {
          companyRecord = companyRecord[0];
@@ -53,16 +52,14 @@ export async function handleJobSubmission(data: JobData) {
          .insert(schema.submission)
          .values({
             positionId: positionRecord.id,
-            locationId: validatedData.locationId, // Use pre-validated location
+            locationId: validatedData.locationId,
             programLevel: validatedData.level,
             source: validatedData.source,
-            year: new Date(),
+            year: validatedData.year,
             workHours: validatedData.workHours,
             coopCycle: validatedData.coopCycle,
             coopYear: validatedData.coopYear,
             offerStatus: validatedData.offerStatus,
-            decision: validatedData.decision,
-            reason: validatedData.decisionReason,
             notes: validatedData.otherNotes,
          })
          .returning();
@@ -112,4 +109,3 @@ export async function handleJobSubmission(data: JobData) {
       return submissionRecord;
    });
 }
-
